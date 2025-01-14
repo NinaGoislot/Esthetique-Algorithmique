@@ -1,0 +1,77 @@
+{
+    "colorSets": [
+      {
+        "id": 1,
+        "name": "Passive",
+        "colors": [
+          { "hue": 195, "sat": 64, "bright": 78, "alpha": 1.0 },
+          { "hue": 209, "sat": 48, "bright": 65, "alpha": 1.0 },
+          { "hue": 171, "sat": 42, "bright": 78, "alpha": 1.0 },
+          { "hue": 18, "sat": 25, "bright": 64, "alpha": 1.0 },
+          { "hue": 36, "sat": 62, "bright": 89, "alpha": 1.0 },
+          { "hue": 51, "sat": 16, "bright": 93, "alpha": 1.0 }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Active",
+        "colors": [
+          { "hue": 210, "sat": 100, "bright": 56, "alpha": 1.0 },
+          { "hue": 202, "sat": 55, "bright": 100, "alpha": 1.0 },
+          { "hue": 357, "sat": 88, "bright": 100, "alpha": 1.0 },
+          { "hue": 329, "sat": 85, "bright": 100, "alpha": 1.0 },
+          { "hue": 25, "sat": 98, "bright": 100, "alpha": 1.0 },
+          { "hue": 42, "sat": 93, "bright": 100, "alpha": 1.0 }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Dull",
+        "colors": [
+          { "hue": 218, "sat": 23, "bright": 41, "alpha": 1.0 },
+          { "hue": 26, "sat": 38, "bright": 43, "alpha": 1.0 },
+          { "hue": 41, "sat": 27, "bright": 45, "alpha": 1.0 },
+          { "hue": 86, "sat": 10, "bright": 61, "alpha": 1.0 },
+          { "hue": 29, "sat": 21, "bright": 82, "alpha": 1.0 },
+          { "hue": 48, "sat": 24, "bright": 83, "alpha": 1.0 }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Bright",
+        "colors": [
+          { "hue": 177, "sat": 97, "bright": 91, "alpha": 1.0 },
+          { "hue": 210, "sat": 88, "bright": 82, "alpha": 1.0 },
+          { "hue": 96, "sat": 100, "bright": 100, "alpha": 1.0 },
+          { "hue": 330, "sat": 100, "bright": 100, "alpha": 1.0 },
+          { "hue": 37, "sat": 89, "bright": 100, "alpha": 1.0 },
+          { "hue": 56, "sat": 100, "bright": 100, "alpha": 1.0 }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Cold",
+        "colors": [
+          { "hue": 100, "sat": 50, "bright": 60, "alpha": 1.0 },
+          { "hue": 110, "sat": 55, "bright": 65, "alpha": 1.0 },
+          { "hue": 120, "sat": 60, "bright": 70, "alpha": 1.0 },
+          { "hue": 130, "sat": 65, "bright": 75, "alpha": 1.0 },
+          { "hue": 140, "sat": 70, "bright": 80, "alpha": 1.0 },
+          { "hue": 150, "sat": 75, "bright": 85, "alpha": 1.0 }
+        ]
+      },
+      {
+        "id": 6,
+        "name": "Warm",
+        "colors": [
+          { "hue": 188, "sat": 56, "bright": 30, "alpha": 1.0 },
+          { "hue": 230, "sat": 56, "bright": 43, "alpha": 1.0 },
+          { "hue": 209, "sat": 55, "bright": 69, "alpha": 1.0 },
+          { "hue": 209, "sat": 20, "bright": 80, "alpha": 1.0 },
+          { "hue": 201, "sat": 19, "bright": 99, "alpha": 1.0 },
+          { "hue": 247, "sat": 4, "bright": 99, "alpha": 1.0 }
+        ]
+      }
+    ]
+  }
+  
