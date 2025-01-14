@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Musikolor</title>
-    <link rel="stylesheet" href="src/css/styles.css" />
+    <link rel="stylesheet" href="../src/css/styles.css" />
   </head>
   <body>
     <header>
@@ -48,7 +48,7 @@
           />
           <input
             type="range"
-            name="rangeInput"
+            name="harmony"
             min="1"
             max="100"
             value="50"
@@ -62,7 +62,7 @@
           <p>harmonious</p>
         </div>
       </div>
-      <button>generate the music</button>
+      <button id="generateMusic">generate the music</button>
     </main>
   </body>
   <script>
@@ -86,4 +86,5 @@
         SliderVibe.style.setProperty('--SliderColor', `rgb(${sliderColorVibe1}, ${sliderColorVibe2}, ${sliderColorVibe3})`);
     }
   </script>
+  <script src="../test.js"></script>
 </html>
