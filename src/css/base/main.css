@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 4rem;
+  height: 70%;
+}
+
+p {
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+
+.intro-text,
+.app-text {
+  text-align: center;
+  width: 20vw;
+}
+
+.app-text span {
+  font-weight: 700;
+}
+
+.color-values {
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+  padding: 0;
+  margin: 0;
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 1.25rem;
+}
+
+.color-values li {
+  list-style: none;
+  display: flex;
+  gap: 0.25rem;
+}
