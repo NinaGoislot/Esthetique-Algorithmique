@@ -1,0 +1,55 @@
+button {
+    font-family: "Outfit", sans-serif;
+    font-size: 1.25rem;
+    padding: 0.75rem 3rem;
+    border-radius: 0.5rem;
+    background: none;
+    border: 1px solid #000;
+    background-color: white;
+    cursor: pointer;
+    text-transform: uppercase;
+    animate: 0.5s;
+    transition: 0.5s;
+    transform: translate(0%, 0%);
+    background-size: 400%;
+    z-index: 1;
+  }
+  
+  button:hover {
+    animation: animate 8s linear infinite;
+    animate: 0.5s;
+    transition: 0.5s;
+  }
+  
+  @keyframes animate {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 400%;
+    }
+  }
+  
+  button:before {
+    animate: 0.5s;
+    transition: 0.5s;
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    z-index: -1;
+    background: linear-gradient(90deg, #03a9f4, #f441a5, #ffeb3b, #03a9f4);
+    background-size: 400%;
+    opacity: 0;
+    transition: 0.5s;
+  }
+  
+  button:hover:before {
+    filter: blur(20px);
+    opacity: 0.75;
+    animation: animate 8s linear infinite;
+    animate: 0.5s;
+    transition: 0.5s;
+  }

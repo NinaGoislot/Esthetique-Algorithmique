@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Musikolor</title>
+    <link rel="stylesheet" href="src/css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <a href="index.html">Musikolor</a>
+    </header>
+    <main>
+      <p class="intro-text">
+        choose your feelings to generate the colored music sheet
+      </p>
+      <div class="slider-container">
+        <div class="slider-text_left">
+          <p>cold</p>
+          <p>passive</p>
+          <p>dull</p>
+          <p>harsh</p>
+        </div>
+        <div class="slider-wrapper">
+          <input
+            type="range"
+            name="temperature"
+            min="1"
+            max="100"
+            value="50"
+            class="slider"
+          />
+          <input
+            type="range"
+            name="action"
+            min="1"
+            max="100"
+            value="50"
+            class="slider"
+          />
+          <input
+            type="range"
+            name="vibe"
+            min="1"
+            max="100"
+            value="50"
+            class="slider"
+          />
+          <input
+            type="range"
+            name="rangeInput"
+            min="1"
+            max="100"
+            value="50"
+            class="slider"
+          />
+        </div>
+        <div class="slider-text_right">
+          <p>warm</p>
+          <p>active</p>
+          <p>bright</p>
+          <p>harmonious</p>
+        </div>
+      </div>
+      <button>generate the music</button>
+    </main>
+  </body>
+  <script>
+        const SliderTemperature = document.querySelector('input[name=temperature]')
+    SliderTemperature.oninput =_=> {
+      const sliderColorTemperature = 255 * (1 - (`${SliderTemperature.value}`/100));
+      SliderTemperature.style.setProperty('--SliderColor', `hsl(${sliderColorTemperature}, 75%, 25%)`);
+    }
+
+    const SliderAction = document.querySelector('input[name=action]')
+    SliderAction.oninput =_=> {
+      const sliderColorAction = 150 * (1 - (`${SliderAction.value}`/100));
+      SliderAction.style.setProperty('--SliderColor', `rgb(0, ${sliderColorAction}, 145)`);
+    }
+
+    const SliderVibe = document.querySelector('input[name=vibe]')
+    SliderVibe.oninput =_=> {
+        const sliderColorVibe1 = 100 + (155 * (`${SliderVibe.value}`/100));
+        const sliderColorVibe2 = 90 - (90 * (`${SliderVibe.value}`/100));
+        const sliderColorVibe3 = 100 + (30 * (`${SliderVibe.value}`/100));
+        SliderVibe.style.setProperty('--SliderColor', `rgb(${sliderColorVibe1}, ${sliderColorVibe2}, ${sliderColorVibe3})`);
+    }
+  </script>
+</html>
