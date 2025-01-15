@@ -25,5 +25,10 @@
     </main>
   </body>
   <script src="./src/js/sketch.js"></script>
+  <script>
+    document.getElementById("temperatureDisplay").innerHTML = localStorage.getItem("temperature");
+    document.getElementById("actionDisplay").innerHTML = localStorage.getItem("action");
+    document.getElementById("vibeDisplay").innerHTML = localStorage.getItem("vibe");
+    document.getElementById("harmonyDisplay").innerHTML = localStorage.getItem("harmony");
+  </script>
 </html>
-
