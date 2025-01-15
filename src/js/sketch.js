@@ -16,10 +16,12 @@ const DEBUG_ON = false; //Change this value to hide console
 
 const MAX_SETS = 20;
 const COLORS_BY_SET = 4; //Nb couleurs par ligne de chaque bloc (largeur d'une grille)
-const SETS_BY_GRID = 5; //Nb de lignes de chaque bloc (hauteur)
+const SETS_BY_GRID = 4; //Nb de lignes de chaque bloc (hauteur)
+
+const MARGIN = 100;
+const SPACING = 20;
 
 //Canvas = Zone de dessin totale
-const MARGIN = 100;
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 300;
 const CANVAS_COLOR = 120;
@@ -31,12 +33,12 @@ const LAYOUT_HEIGHT = CANVAS_HEIGHT - MARGIN;
 const LAYOUT_COLOR = 'orange';
 
 //Grille = Ensemble de sets
-const GRID_WIDTH = LAYOUT_WIDTH / COLORS_BY_SET;
+const GRID_WIDTH = LAYOUT_WIDTH / (MAX_SETS / SETS_BY_GRID) - (SPACING-SPACING/(MAX_SETS / SETS_BY_GRID));
 const GRID_HEIGHT = LAYOUT_HEIGHT;
 const GRID_COLOR = 'pink';
 
 //Color = Une couleur
-const COLOR_WIDTH = GRID_WIDTH / (MAX_SETS / SETS_BY_GRID);
+const COLOR_WIDTH = GRID_WIDTH / COLORS_BY_SET;
 const COLOR_HEIGHT = GRID_HEIGHT / SETS_BY_GRID;
 
 //Autres variables
@@ -77,9 +79,9 @@ function draw() {
   fill(LAYOUT_COLOR);
   rect(MARGIN / 2, MARGIN / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
 
-  for (let k = 0; k < COLORS_BY_SET; k++) {
+  for (let k = 0; k < MAX_SETS / SETS_BY_GRID; k++) {
     fill(GRID_COLOR);
-    rect(MARGIN / 2 + k * GRID_WIDTH, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
+    rect(MARGIN / 2 + k * GRID_WIDTH + k * SPACING, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
   }
 
   for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) {
@@ -111,7 +113,7 @@ function draw() {
         gridColors[i][j] = currentColor;
         fill(currentColor);
 
-        rect(100 + j * COLOR_WIDTH + l*GRID_WIDTH, 100 + i * COLOR_HEIGHT, COLOR_WIDTH, COLOR_HEIGHT);
+        rect(MARGIN/2 + j * COLOR_WIDTH + l*GRID_WIDTH + l * SPACING, MARGIN/2 + i * COLOR_HEIGHT, COLOR_WIDTH, COLOR_HEIGHT);
       }
     }
   }
