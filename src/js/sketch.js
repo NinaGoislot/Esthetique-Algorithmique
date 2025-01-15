@@ -15,7 +15,7 @@ const DEBUG_ON = false; //Change this value to hide console
 //-----------------------------------------------------------------------------------------
 
 const MAX_SETS = 20;
-const COLORS_BY_SET = 4; //Nb couleurs par ligne de chaque bloc (largeur)
+const COLORS_BY_SET = 4; //Nb couleurs par ligne de chaque bloc (largeur d'une grille)
 const SETS_BY_GRID = 5; //Nb de lignes de chaque bloc (hauteur)
 
 //Canvas = Zone de dessin totale
