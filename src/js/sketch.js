@@ -1,9 +1,9 @@
 let data = [];
 let colorSets = [];
 let percentages = {
-  "Passive-Active": 50,
-  "Dull-Bright": 50,
-  "Cold-Warm": 60
+  "Passive-Active": localStorage.getItem("temperature") || 50,
+  "Dull-Bright": localStorage.getItem("action") || 50,
+  "Cold-Warm": localStorage.getItem("vibe") || 50
 };
 //-----------------------------------------------------------------------------------------
 //----------------------------------------- DEBUG -----------------------------------------
