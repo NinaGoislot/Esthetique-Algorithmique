@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Musikolor</title>
     <link rel="stylesheet" href="../src/css/styles.css" />
-    <script src="../libraries/p5.min.js"></script>
-    <script src="../libraries/p5.sound.min.js"></script>
+    <script src="libraries/p5.min.js"></script>
+    <script src="libraries/p5.sound.min.js"></script>
   </head>
   <body>
     <header>
@@ -14,7 +14,7 @@
     </header>
     <main>
       <p class="app-text">Your <span>colored</span> music sheet</p>
-      <canvas id="music-color" width="1200" height="250"></canvas>
+      <div id="colorgrid"></div>
       <ul class="color-values">
         <li>Temperature :<span id="temperatureDisplay">0</span></li>
         <li>Action :<span id="actionDisplay">0</span></li>
@@ -24,5 +24,6 @@
       <button>play</button>
     </main>
   </body>
-  <script src="../test.js"></script>
+  <script src="src/js/sketch.js"></script>
 </html>
+

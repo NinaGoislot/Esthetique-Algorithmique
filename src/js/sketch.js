@@ -19,9 +19,9 @@ const COLORS_BY_SET = 4; //Nb couleurs par ligne de chaque bloc (largeur d'une g
 const SETS_BY_GRID = 5; //Nb de lignes de chaque bloc (hauteur)
 
 //Canvas = Zone de dessin totale
-const MARGIN = 200;
+const MARGIN = 100;
 const CANVAS_WIDTH = 1000;
-const CANVAS_HEIGHT = 600;
+const CANVAS_HEIGHT = 300;
 const CANVAS_COLOR = 120;
 
 
@@ -45,6 +45,8 @@ let randomNb;
 let currentColor;
 let currentSet = [];
 
+let colorCanvas;
+
 //-----------------------------------------------------------------------------------------
 //----------------------------------------- CANVAS ----------------------------------------
 //-----------------------------------------------------------------------------------------
@@ -55,7 +57,8 @@ function preload() {
 
 function setup() {
   load();
-  createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+  colorCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+  colorCanvas.parent('colorgrid')
   background(CANVAS_COLOR);
   colorMode(HSB)
   strokeWeight(2);
