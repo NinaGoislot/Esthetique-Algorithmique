@@ -28,13 +28,13 @@ const SPACING = 20;
 //Canvas = Zone de dessin totale
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 300;
-const CANVAS_COLOR = 120;
+const CANVAS_COLOR = 255;
 
 
 //Layout = Zone de dessin du layout
 const LAYOUT_WIDTH = CANVAS_WIDTH - MARGIN;
 const LAYOUT_HEIGHT = CANVAS_HEIGHT - MARGIN;
-const LAYOUT_COLOR = 'orange';
+const LAYOUT_COLOR = 'white';
 
 //Grille = Ensemble de sets
 const GRID_WIDTH = LAYOUT_WIDTH / (MAX_SETS / SETS_BY_GRID) - (SPACING - SPACING / (MAX_SETS / SETS_BY_GRID));
@@ -254,17 +254,8 @@ function setCurrentSet() {
       case 0:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (DEBUG_POURCENTAGE_ON) {
-              console.log("test");
-            }
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (DEBUG_POURCENTAGE_ON) {
-                console.log("test 2");
-              }
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
-                if (DEBUG_POURCENTAGE_ON) {
-                  console.log("test 3");
-                }
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
@@ -275,11 +266,67 @@ function setCurrentSet() {
         }
         break
       case 1:
+        const checkWarmCouple = isParamOn(warmPercentage);
+        const checkActiveCouple = isParamOn(activePercentage);
+        const checkBrightCouple = isParamOn(brightPercentage);
+
+        if (DEBUG_SET_CREATION_ON) {
+          console.log("--------------------------------------------------------------------------------------");
+          console.log("Check couple");
+          console.log(checkWarmCouple);
+          console.log(checkActiveCouple);
+          console.log(checkBrightCouple);
+        }
+
         flatPossibleColors.forEach(color => {
-          if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
-                correctColors.push(color);
+          if (checkWarmCouple) {
+            if (checkActiveCouple) {
+              if (checkBrightCouple) {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                    if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                      correctColors.push(color);
+                    }
+                  }
+                }
+              } else {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              }
+            } else {
+              if (checkBrightCouple) {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              } else {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  correctColors.push(color);
+                }
+              }
+            }
+          } else {
+            if (checkActiveCouple) {
+              if (checkBrightCouple) {
+                if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                  if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              } else {
+                if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                  correctColors.push(color);
+                }
+              }
+            } else {
+              if (checkBrightCouple) {
+                if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                  correctColors.push(color);
+                }
               }
             }
           }
@@ -291,8 +338,8 @@ function setCurrentSet() {
       case 2:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
@@ -305,8 +352,8 @@ function setCurrentSet() {
       default:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
@@ -323,7 +370,7 @@ function setCurrentSet() {
       // console.log(correctColors);
     }
 
-    if (correctColors.length <= 1) {
+    if (correctColors.length < COLORS_BY_SET) {
       let set;
       const coldWarmCouple = conceptsCouples.find((couple) =>
         couple.name.includes("Warm")
@@ -417,7 +464,7 @@ function getTabPossibleColors() {
   conceptsCouples.forEach((oneCouple) => {
     const currentPercentage = getPercentage(oneCouple);
     const dominantConceptCouple = currentPercentage > 50 ? 2 : 1;
-    const dominantPercentage = dominantConceptCouple === 1 ? currentPercentage : 100 - currentPercentage;
+    const dominantPercentage = dominantConceptCouple === 2 ? currentPercentage : 100 - currentPercentage;
 
     if (DEBUG_POURCENTAGE_ON) {
       console.log("currentPercentage :");
@@ -435,7 +482,7 @@ function getTabPossibleColors() {
 
     possibleColors.push({
       name: oneCouple.name,
-      colors: [...selectedFromSet1, ...selectedFromSet2]
+      colors: [...set1, ...set2]
     });
   });
 
@@ -481,22 +528,30 @@ function selectRandomColors(colorSet, numColors) {
   return shuffled.slice(0, numColors);
 }
 
-function findDominantConcept() {
-
-}
-
 function isColorWarm(color) {
-  if (color.hue > 0 && color.hue < 90 || color.hue > 270) {
+  if (color.hue > 0 && color.hue < 80 || color.hue > 290) {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur est warm");
+    }
     return true;
   } else {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur n'est pas warm");
+    }
     return false;
   }
 }
 
 function isColorActive(color) {
   if (color.sat > 50) {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur est active");
+    }
     return true;
   } else {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur n'est pas active");
+    }
     return false;
   }
 }
