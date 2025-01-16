@@ -9,8 +9,9 @@ let percentages = [];
 //----------------------------------------- DEBUG -----------------------------------------
 //-----------------------------------------------------------------------------------------
 const DEBUG_ON = false; //Change this value to hide console
-const DEBUG_SET_CREATION_ON = false; //Change this value to hide console
-const DEBUG_POURCENTAGE_ON = true; //Change this value to hide console
+const DEBUG_SET_CREATION_ON = true; //Change this value to hide console
+const DEBUG_POURCENTAGE_ON = false; //Change this value to hide console
+const DEBUG_UTILITIES_FUNCTIONS = false; //Change this value to hide console
 
 //-----------------------------------------------------------------------------------------
 //-------------------------------------- DECLARATION --------------------------------------
@@ -26,13 +27,13 @@ const SPACING = 20;
 //Canvas = Zone de dessin totale
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 300;
-const CANVAS_COLOR = 120;
+const CANVAS_COLOR = 255;
 
 
 //Layout = Zone de dessin du layout
 const LAYOUT_WIDTH = CANVAS_WIDTH - MARGIN;
 const LAYOUT_HEIGHT = CANVAS_HEIGHT - MARGIN;
-const LAYOUT_COLOR = 'orange';
+const LAYOUT_COLOR = 'white';
 
 //Grille = Ensemble de sets
 const GRID_WIDTH = LAYOUT_WIDTH / (MAX_SETS / SETS_BY_GRID) - (SPACING - SPACING / (MAX_SETS / SETS_BY_GRID));
@@ -68,7 +69,9 @@ function setup() {
   colorCanvas.parent('colorgrid')
   background(CANVAS_COLOR);
   colorMode(HSB)
+  stroke('white');
   strokeWeight(2);
+
   noLoop();
 
   if (DEBUG_ON) {
@@ -89,10 +92,10 @@ function draw() {
     rect(MARGIN / 2 + k * GRID_WIDTH + k * SPACING, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
   }
 
-  for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) { //Définir Layout
-    for (let i = 0; i < SETS_BY_GRID; i++) { // Définir Grid
+  for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) { //Pour chaque grid
+    for (let i = 0; i < SETS_BY_GRID; i++) { // Pour chaque ligne
       setCurrentSet();
-      for (let j = 0; j < COLORS_BY_SET; j++) { //Définir set
+      for (let j = 0; j < COLORS_BY_SET; j++) { //Pour chaque couleur
         // let neighbourExisting;
 
         // do {
@@ -142,7 +145,7 @@ function load() {
   colorSets = data.colorSets;
 
   // ---------------------------------------------------
-  // -- Initialisation de la grille suivi de couleurs --
+  // -- Initialisation de la grille suivi de couleurs --  -> A VIRER
   for (let i = 0; i < SETS_BY_GRID; i++) {
     gridColors[i] = [];
     for (let j = 0; j < COLORS_BY_SET; j++) {
@@ -202,7 +205,13 @@ function load() {
 
 function setCurrentSet() {
   let possibleColors = getTabPossibleColors();
+
   const flatPossibleColors = possibleColors.map(set => set.colors).flat();
+
+  if (DEBUG_SET_CREATION_ON) {
+    console.log("Flat colors");
+    console.log(flatPossibleColors);
+  }
   let correctColors = [];
   let finalSet = [];
 
@@ -224,6 +233,9 @@ function setCurrentSet() {
     console.log("Bright % Value : ");
     console.log(warmPercentage);
   }
+  if (DEBUG_SET_CREATION_ON) {
+    console.log("--------- NOUVEAU SET ----------- ");
+  }
 
   for (let i = 0; i < COLORS_BY_SET; i++) {
     correctColors = [];
@@ -231,17 +243,8 @@ function setCurrentSet() {
       case 0:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (DEBUG_POURCENTAGE_ON) {
-              console.log("test");
-            }
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (DEBUG_POURCENTAGE_ON) {
-                console.log("test 2");
-              }
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
-                if (DEBUG_POURCENTAGE_ON) {
-                  console.log("test 3");
-                }
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
@@ -250,11 +253,67 @@ function setCurrentSet() {
 
         break
       case 1:
+        const checkWarmCouple = isParamOn(warmPercentage);
+        const checkActiveCouple = isParamOn(activePercentage);
+        const checkBrightCouple = isParamOn(brightPercentage);
+
+        if (DEBUG_SET_CREATION_ON) {
+          console.log("--------------------------------------------------------------------------------------");
+          console.log("Check couple");
+          console.log(checkWarmCouple);
+          console.log(checkActiveCouple);
+          console.log(checkBrightCouple);
+        }
+
         flatPossibleColors.forEach(color => {
-          if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
-                correctColors.push(color);
+          if (checkWarmCouple) {
+            if (checkActiveCouple) {
+              if (checkBrightCouple) {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                    if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                      correctColors.push(color);
+                    }
+                  }
+                }
+              } else {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              }
+            } else {
+              if (checkBrightCouple) {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              } else {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  correctColors.push(color);
+                }
+              }
+            }
+          } else {
+            if (checkActiveCouple) {
+              if (checkBrightCouple) {
+                if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                  if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              } else {
+                if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                  correctColors.push(color);
+                }
+              }
+            } else {
+              if (checkBrightCouple) {
+                if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                  correctColors.push(color);
+                }
               }
             }
           }
@@ -263,8 +322,8 @@ function setCurrentSet() {
       case 2:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
@@ -274,8 +333,8 @@ function setCurrentSet() {
       default:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
@@ -283,8 +342,45 @@ function setCurrentSet() {
         });
         break
     }
-    if (correctColors.length < 1) {
-      correctColors.push(random(flatPossibleColors));
+
+    if (DEBUG_SET_CREATION_ON) {
+      // console.log("CorrectColors before pushing");
+      // console.log(correctColors);
+    }
+
+    if (correctColors.length <= 1) {
+      let set;
+      const coldWarmCouple = conceptsCouples.find((couple) =>
+        couple.name.includes("Warm")
+      );
+      if (warmPercentage > 50) {
+        set = coldWarmCouple.colors.set2;
+      } else {
+        set = coldWarmCouple.colors.set1;
+      }
+
+      let newColor1;
+      let newColor2;
+      let colorIsTheSame
+
+      newColor1 = random(set);
+      do {
+        colorIsTheSame = false;
+        newColor2 = random(set);
+
+        if (areColorsEqual(newColor1, newColor2)) {
+          colorIsTheSame = true;
+        }
+      } while (colorIsTheSame);
+
+      correctColors.push(newColor1);
+      correctColors.push(newColor2);
+
+      if (DEBUG_SET_CREATION_ON) {
+        // console.log("CorrectColors inférieur à 1 ici");
+        // console.log("CorrectColors after pushing");
+        // console.log(correctColors);
+      }
     }
 
 
@@ -297,28 +393,34 @@ function setCurrentSet() {
     let exist;
     do {
       exist = false;
-      randomColor = correctColors[Math.floor(Math.random() * correctColors.length)];
+      let trucrandom = Math.floor(Math.random() * correctColors.length);
+      randomColor = correctColors[trucrandom];
+      if (DEBUG_SET_CREATION_ON) {
+        // console.log("nombre random : ");
+        // console.log(trucrandom);
+        // console.log("RandomColor");
+        // console.log(randomColor);
+      }
 
-      for (let j = 0; j < finalSet.length; j++) {
-        const colorsEqual = areColorsEqual(randomColor, finalSet[j]);
+
+      for (let m = 0; m < finalSet.length; m++) {
+        const colorsEqual = areColorsEqual(randomColor, finalSet[m]);
         if (colorsEqual) {
           exist = true;
         }
       }
 
       if (DEBUG_SET_CREATION_ON) {
-        console.log("random color : ");
-        console.log(randomColor);
-        console.log("exist :");
-        console.log(exist);
+        // console.log("exist :");
+        // console.log(exist);
       }
     } while (exist);
 
     finalSet.push(randomColor);
 
     if (DEBUG_SET_CREATION_ON) {
-      console.log("FinalSet :");
-      console.log(finalSet);
+      // console.log("FinalSet :");
+      // console.log(finalSet);
     }
   }
 
@@ -332,7 +434,7 @@ function getTabPossibleColors() {
   conceptsCouples.forEach((oneCouple) => {
     const currentPercentage = getPercentage(oneCouple);
     const dominantConceptCouple = currentPercentage > 50 ? 2 : 1;
-    const dominantPercentage = dominantConceptCouple === 1 ? currentPercentage : 100 - currentPercentage;
+    const dominantPercentage = dominantConceptCouple === 2 ? currentPercentage : 100 - currentPercentage;
 
     if (DEBUG_POURCENTAGE_ON) {
       console.log("currentPercentage :");
@@ -349,19 +451,38 @@ function getTabPossibleColors() {
     const set2 = oneCouple.colors.set2;
 
     // Calculer le nombre de couleurs à prendre de chaque set
-    const nbColorsFromSet1 = Math.round((dominantConceptCouple === 1 ? dominantPercentage : 100 - dominantPercentage) / 100 * COLORS_BY_SET);
+    let nbColorsFromSet1 = Math.round((dominantConceptCouple === 1 ? dominantPercentage : 100 - dominantPercentage) / 100 * COLORS_BY_SET);
+    if (nbColorsFromSet1 === COLORS_BY_SET) {
+      setRandomNb();
+      if (randomNb > 0 && randomNb <= dominantPercentage && dominantPercentage != 100) {
+        nbColorsFromSet1 = COLORS_BY_SET - 1;
+      }
+    }
     const nbColorsFromSet2 = COLORS_BY_SET - nbColorsFromSet1;
 
     // Sélectionner aléatoirement les couleurs de chaque set
     const selectedFromSet1 = selectRandomColors(set1, nbColorsFromSet1);
     const selectedFromSet2 = selectRandomColors(set2, nbColorsFromSet2);
 
+    if (DEBUG_SET_CREATION_ON) {
+      // console.log("Total des couleurs : " + selectedFromSet1.length + " "+ selectedFromSet2.length)
+    }
+
+    // possibleColors.push({
+    //   name: oneCouple.name,
+    //   colors: [...selectedFromSet1, ...selectedFromSet2]
+    // });
+
     possibleColors.push({
       name: oneCouple.name,
-      colors: [...selectedFromSet1, ...selectedFromSet2]
+      colors: [...set1, ...set2]
     });
   });
 
+  if (DEBUG_SET_CREATION_ON) {
+    console.log("Possible colors : ")
+    console.log(possibleColors)
+  }
   return possibleColors;
 }
 
@@ -399,10 +520,6 @@ function setCurrentColor(position) {
 
 }
 
-function checkNeighbours() {
-
-}
-
 //-----------------------------------------------------------------------------------------
 //--------------------------------------- UTILITIES ---------------------------------------
 //-----------------------------------------------------------------------------------------
@@ -419,6 +536,15 @@ function areColorsEqual(color1, color2) {
   //   alpha(color1) === alpha(color2)
   // );
 
+  if (DEBUG_UTILITIES_FUNCTIONS) {
+    console.log("-- COLORS EQUAL --");
+    console.log("color 1 : ");
+    console.log(color1);
+    console.log("color 2 :");
+    console.log(color2);
+    console.log("------------------");
+  }
+
   return (
     color1.hue === color2.hue &&
     color1.sat === color2.sat &&
@@ -432,81 +558,58 @@ function selectRandomColors(colorSet, numColors) {
   return shuffled.slice(0, numColors);
 }
 
-function findDominantConcept() {
-
-}
-
 function isColorWarm(color) {
-  if (color.hue > 0 && color.hue < 90 || color.hue > 270) {
+  if (color.hue > 0 && color.hue < 80 || color.hue > 290) {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur est warm");
+    }
     return true;
   } else {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur n'est pas warm");
+    }
     return false;
   }
 }
 
 function isColorActive(color) {
   if (color.sat > 50) {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur est active");
+    }
     return true;
   } else {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur n'est pas active");
+    }
     return false;
   }
 }
 
 function isColorBright(color) {
   if (color.bright > 50) {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur est bright");
+    }
+    return true;
+  } else {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur n'est pas bright");
+    }
+    
+    return false;
+  }
+}
+
+function isParamOn(param) {
+  setRandomNb();
+  console.log("% :")
+  console.log(param.value)
+  console.log("Nombre random :")
+  console.log(randomNb)
+  if (randomNb <= param.value) {
     return true;
   } else {
     return false;
   }
 }
-
-
-// function generateGrid(rows, cols) {
-//   let grid = [];
-//   for (let i = 0; i < rows * cols; i++) {
-//     let set = generateSet();
-//     grid.push(set);
-//   }
-//   return grid;
-// }
-
-// function generateSet() {
-//   let colors = [];
-//   let pairings = ["Passive-Active", "Dull-Bright", "Cold-Warm"];
-
-//   for (let pair of pairings) {
-//     let [setA, setB] = pair.split("-").map(name => colorSets.find(set => set.name === name));
-//     let percent = percentages[pair] / 100;
-
-//     // Select colors based on percentages
-//     let selectedColors = [];
-//     for (let i = 0; i < 4; i++) {
-//       let sourceSet = random() < percent ? setB.colors : setA.colors;
-//       let color = random(sourceSet);
-//       selectedColors.push(color);
-//     }
-//     colors.push(...selectedColors);
-//   }
-
-//   return colors.slice(0, 4); // Ensure 4 unique colors
-// }
-
-// function drawGrid(grid) {
-//   let cellWidth = width / 5;
-//   let cellHeight = height / 4;
-
-//   for (let i = 0; i < grid.length; i++) {
-//     let x = (i % 5) * cellWidth;
-//     let y = floor(i / 5) * cellHeight;
-//     drawSet(grid[i], x, y, cellWidth, cellHeight);
-//   }
-// }
-
-// function drawSet(set, x, y, w, h) {
-//   let colorWidth = w / set.length;
-//   for (let i = 0; i < set.length; i++) {
-//     let c = set[i];
-//     fill(c.hue, c.sat, c.bright, c.alpha * 255);
-//     rect(x + i * colorWidth, y, colorWidth, h);
-//   }
-// }
