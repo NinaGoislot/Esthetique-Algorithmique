@@ -21,6 +21,10 @@ main {
   justify-content: space-around;
 }
 
+.nina {
+  flex-direction: row;
+}
+
 main section {
   display: flex;
   justify-content: center;

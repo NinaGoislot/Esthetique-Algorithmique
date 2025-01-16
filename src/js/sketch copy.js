@@ -28,13 +28,13 @@ const SPACING = 20;
 //Canvas = Zone de dessin totale
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 300;
-const CANVAS_COLOR = 120;
+const CANVAS_COLOR = 255;
 
 
 //Layout = Zone de dessin du layout
 const LAYOUT_WIDTH = CANVAS_WIDTH - MARGIN;
 const LAYOUT_HEIGHT = CANVAS_HEIGHT - MARGIN;
-const LAYOUT_COLOR = 'orange';
+const LAYOUT_COLOR = 'white';
 
 //Grille = Ensemble de sets
 const GRID_WIDTH = LAYOUT_WIDTH / (MAX_SETS / SETS_BY_GRID) - (SPACING - SPACING / (MAX_SETS / SETS_BY_GRID));
@@ -62,19 +62,9 @@ let colorCanvas;
 
 function preload() {
   if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP 1 : Je charge les données du json");
+    console.log("► STEP : Je charge les données du json");
   }
-
-  try {
-    data = loadJSON('./data/concepts.json', (loadedData) => {
-      if (!loadedData || !loadedData.colorSets) {
-        throw new Error("Données JSON manquantes ou incorrectes.");
-      }
-    });
-  } catch (err) {
-    console.error("Erreur lors du chargement des données :", err.message);
-    noLoop();
-  }
+  data = loadJSON('./data/concepts.json');
 }
 
 function setup() {
@@ -86,7 +76,7 @@ function setup() {
 
   //Debug console 
   if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP 2 : Je setup le canvas");
+    console.log("► STEP : Je setup le canvas");
   }
 
   if (DEBUG_ON) {
@@ -107,11 +97,12 @@ function setup() {
 
   noLoop();
 
+
 }
 
 function draw() {
   if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP 3 : Je draw");
+    console.log("► STEP : Je draw");
   }
 
   frameRate(1);
@@ -123,22 +114,48 @@ function draw() {
     rect(MARGIN / 2 + k * GRID_WIDTH + k * SPACING, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
   }
 
-  for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) { //Définir Layout
-    for (let i = 0; i < SETS_BY_GRID; i++) { // Définir Grid
+  for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) { //Pour chaque grid
+    for (let i = 0; i < SETS_BY_GRID; i++) { // Pour chaque ligne
       setCurrentSet();
       for (let j = 0; j < COLORS_BY_SET; j++) { //Pour chaque couleur
+        // let neighbourExisting;
+
+        // do {
+        //   setRandomNb();
+        //   setCurrentColor(j);
+
+        //   // currentSet[j] = currentColor
+
+
+
+        //   // Check les voisins
+        //   neighbourExisting =
+        //     (i > 0 && areColorsEqual(gridColors[i - 1][j], currentColor)) || // en haut
+        //     (j > 0 && areColorsEqual(gridColors[i][j - 1], currentColor)); // a gauche
+
+        // } while (neighbourExisting);
+
+        // gridColors[i][j] = currentColor;
 
         currentColor = currentSet[j];
+        // console.log(currentSet)
+        // console.log(currentColor)
 
         fill(currentColor.hue, currentColor.sat, currentColor.bright);
 
         rect(MARGIN / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING, MARGIN / 2 + i * COLOR_HEIGHT, COLOR_WIDTH, COLOR_HEIGHT);
       }
-    }
-  }
+      // gridSets[i] = currentSet;
 
-  if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP FINAL : fonction draw finie");
+      //Fonction je modifie les couleurs -> while les couleurs sont pas bien
+
+      // for (let j = 0; j < COLORS_BY_SET; j++) {
+
+      //   current = gridColors[i][j];
+      //   fill(currentColor);
+      //   rect(MARGIN/2 + j * COLOR_WIDTH + l*GRID_WIDTH + l * SPACING, MARGIN/2 + i * COLOR_HEIGHT, COLOR_WIDTH, COLOR_HEIGHT);
+      // }
+    }
   }
 }
 
@@ -150,7 +167,7 @@ function load() {
   colorSets = data.colorSets;
 
   // ---------------------------------------------------
-  // -- Initialisation de la grille suivi de couleurs --
+  // -- Initialisation de la grille suivi de couleurs --  -> A VIRER
   for (let i = 0; i < SETS_BY_GRID; i++) {
     gridColors[i] = [];
     for (let j = 0; j < COLORS_BY_SET; j++) {
@@ -189,7 +206,7 @@ function load() {
   // -------------- LOAD les poucentages ---------------
 
   //Prévention erreur 
-  if (conceptsCouples == []) {
+  if (conceptsCouples == []){
     error("Les données des couples de concepts n'ont pas été chargées.");
     return;
   }
@@ -206,23 +223,33 @@ function load() {
     console.log("Liste pourcentage : ");
     console.log(percentages);
   }
+
+  // percentages = {
+  //   "Passive-Active": localStorage.getItem("temperature") || 50,
+  //   "Dull-Bright": localStorage.getItem("action") || 50,
+  //   "Cold-Warm": localStorage.getItem("vibe") || 50
+  // }
 }
 
 function setCurrentSet() {
+  if (DEBUG_STEP_CODE_ON) {
+    console.log("► STEP : Je commence la création d'un set");
+  }
+
   let possibleColors = getTabPossibleColors();
 
   //Prévention erreur 
-  if (possibleColors == []) {
+  if (possibleColors == []){
     error("Aucune couleur n'a été récupérée.");
     return;
   }
 
-  if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP 5 : Je commence la création d'un set");
-  }
-
   const flatPossibleColors = possibleColors.map(set => set.colors).flat();
 
+  if (DEBUG_SET_CREATION_ON) {
+    console.log("Flat colors");
+    console.log(flatPossibleColors);
+  }
   let correctColors = [];
   let finalSet = [];
 
@@ -245,76 +272,109 @@ function setCurrentSet() {
     console.log(warmPercentage);
   }
 
-  if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP 6 : Je récupère 4 couleurs pour le set");
-  }
   for (let i = 0; i < COLORS_BY_SET; i++) {
     correctColors = [];
     switch (i) {
       case 0:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (DEBUG_POURCENTAGE_ON) {
-              console.log("test");
-            }
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (DEBUG_POURCENTAGE_ON) {
-                console.log("test 2");
-              }
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
-                if (DEBUG_POURCENTAGE_ON) {
-                  console.log("test 3");
-                }
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
           }
         });
-        if (DEBUG_STEP_CODE_ON) {
-          console.log("► STEP 6 - A : Première couleur");
-        }
+
         break
       case 1:
+        const checkWarmCouple = isParamOn(warmPercentage);
+        const checkActiveCouple = isParamOn(activePercentage);
+        const checkBrightCouple = isParamOn(brightPercentage);
+
+        if (DEBUG_SET_CREATION_ON) {
+          console.log("--------------------------------------------------------------------------------------");
+          console.log("Check couple");
+          console.log(checkWarmCouple);
+          console.log(checkActiveCouple);
+          console.log(checkBrightCouple);
+        }
+
         flatPossibleColors.forEach(color => {
-          if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
-                correctColors.push(color);
+          if (checkWarmCouple) {
+            if (checkActiveCouple) {
+              if (checkBrightCouple) {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                    if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                      correctColors.push(color);
+                    }
+                  }
+                }
+              } else {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              }
+            } else {
+              if (checkBrightCouple) {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              } else {
+                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                  correctColors.push(color);
+                }
+              }
+            }
+          } else {
+            if (checkActiveCouple) {
+              if (checkBrightCouple) {
+                if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                  if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                    correctColors.push(color);
+                  }
+                }
+              } else {
+                if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+                  correctColors.push(color);
+                }
+              }
+            } else {
+              if (checkBrightCouple) {
+                if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
+                  correctColors.push(color);
+                }
               }
             }
           }
         });
-        if (DEBUG_STEP_CODE_ON) {
-          console.log("► STEP 6 - B : Deuxième couleur");
-        }
         break
       case 2:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
           }
         });
-        if (DEBUG_STEP_CODE_ON) {
-          console.log("► STEP 6 - C : Troisième couleur");
-        }
         break
       default:
         flatPossibleColors.forEach(color => {
           if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorWarm(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorWarm(color) && brightPercentage.value <= 50) {
+            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
+              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                 correctColors.push(color);
               }
             }
           }
         });
-        if (DEBUG_STEP_CODE_ON) {
-          console.log("► STEP 6 - D : Plus de couleurs");
-        }
         break
     }
 
@@ -335,28 +395,31 @@ function setCurrentSet() {
         set = coldWarmCouple.colors.set1;
       }
 
-      // Je complète les couleurs que le code peut choisir à la fin pour avoir au moins 4 choix
-      while (correctColors.length < COLORS_BY_SET) {
-        let newColor;
-        let colorIsUnique;
-    
-        do {
-          colorIsUnique = true;
-          newColor = random(set);
-    
-          // Vérifier si la nouvelle couleur est déjà dans le tableau
-          if (correctColors.some((existingColor) => areColorsEqual(existingColor, newColor))) {
-            colorIsUnique = false;
-          }
-        } while (!colorIsUnique);
-    
-        correctColors.push(newColor);
+      let newColor1;
+      let newColor2;
+      let colorIsTheSame
+
+      newColor1 = random(set);
+      do {
+        colorIsTheSame = false;
+        newColor2 = random(set);
+
+        if (areColorsEqual(newColor1, newColor2)) {
+          colorIsTheSame = true;
+        }
+      } while (colorIsTheSame);
+
+      correctColors.push(newColor1);
+      correctColors.push(newColor2);
+
+      if (DEBUG_SET_CREATION_ON) {
+        // console.log("CorrectColors inférieur à 1 ici");
+        // console.log("CorrectColors after pushing");
+        // console.log(correctColors);
       }
     }
 
-    if (DEBUG_STEP_CODE_ON) {
-      console.log("► STEP 7 : Je choisi une couleur au hasard pour chaque");
-    }
+
 
     //Mélanger le tableau
     correctColors = correctColors.sort(() => Math.random() - 0.5);
@@ -364,44 +427,37 @@ function setCurrentSet() {
     //Push la couleur finale dans le tableau
     let randomColor;
     let exist;
-
     do {
       exist = false;
       let trucrandom = Math.floor(Math.random() * correctColors.length);
       randomColor = correctColors[trucrandom];
-
-      if (DEBUG_STEP_CODE_ON) {
+      if (DEBUG_SET_CREATION_ON) {
         // console.log("nombre random : ");
         // console.log(trucrandom);
         // console.log("RandomColor");
         // console.log(randomColor);
-        // console.log("finalSet");
-        // console.log(finalSet);
       }
+
 
       for (let m = 0; m < finalSet.length; m++) {
         const colorsEqual = areColorsEqual(randomColor, finalSet[m]);
         if (colorsEqual) {
           exist = true;
-          break;
         }
+      }
 
-        if (DEBUG_STEP_CODE_ON) {
-          console.log(colorsEqual);
-        }
+      if (DEBUG_SET_CREATION_ON) {
+        // console.log("exist :");
+        // console.log(exist);
       }
     } while (exist);
 
     finalSet.push(randomColor);
 
     if (DEBUG_SET_CREATION_ON) {
-      console.log("FinalSet :");
-      console.log(finalSet);
+      // console.log("FinalSet :");
+      // console.log(finalSet);
     }
-  }
-
-  if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP 8 : Je transmet le set final");
   }
 
   currentSet = finalSet;
@@ -409,15 +465,12 @@ function setCurrentSet() {
 }
 
 function getTabPossibleColors() {
-  if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP 4 : Je récupère toutes les couleurs");
-  }
   let possibleColors = [];
 
   conceptsCouples.forEach((oneCouple) => {
     const currentPercentage = getPercentage(oneCouple);
     const dominantConceptCouple = currentPercentage > 50 ? 2 : 1;
-    const dominantPercentage = dominantConceptCouple === 1 ? currentPercentage : 100 - currentPercentage;
+    const dominantPercentage = dominantConceptCouple === 2 ? currentPercentage : 100 - currentPercentage;
 
     if (DEBUG_POURCENTAGE_ON) {
       console.log("currentPercentage :");
@@ -433,12 +486,39 @@ function getTabPossibleColors() {
     const set1 = oneCouple.colors.set1;
     const set2 = oneCouple.colors.set2;
 
+    // Calculer le nombre de couleurs à prendre de chaque set
+    let nbColorsFromSet1 = Math.round((dominantConceptCouple === 1 ? dominantPercentage : 100 - dominantPercentage) / 100 * COLORS_BY_SET);
+    if (nbColorsFromSet1 === COLORS_BY_SET) {
+      setRandomNb();
+      if (randomNb > 0 && randomNb <= dominantPercentage && dominantPercentage != 100) {
+        nbColorsFromSet1 = COLORS_BY_SET - 1;
+      }
+    }
+    const nbColorsFromSet2 = COLORS_BY_SET - nbColorsFromSet1;
+
+    // Sélectionner aléatoirement les couleurs de chaque set
+    const selectedFromSet1 = selectRandomColors(set1, nbColorsFromSet1);
+    const selectedFromSet2 = selectRandomColors(set2, nbColorsFromSet2);
+
+    if (DEBUG_SET_CREATION_ON) {
+      // console.log("Total des couleurs : " + selectedFromSet1.length + " "+ selectedFromSet2.length)
+    }
+
+    // possibleColors.push({
+    //   name: oneCouple.name,
+    //   colors: [...selectedFromSet1, ...selectedFromSet2]
+    // });
+
     possibleColors.push({
       name: oneCouple.name,
-      colors: [...selectedFromSet1, ...selectedFromSet2]
+      colors: [...set1, ...set2]
     });
   });
 
+  if (DEBUG_SET_CREATION_ON) {
+    console.log("Possible colors : ")
+    console.log(possibleColors)
+  }
   return possibleColors;
 }
 
@@ -450,6 +530,32 @@ function getPercentage(couple) {
   }
 }
 
+function setCurrentColor(position) {
+
+  possibleColors = [];
+
+  conceptsCouples.forEach((oneCouple) => {
+
+  });
+
+
+  if (DEBUG_SET_CREATION_ON) {
+
+  }
+
+
+  //---------------------------------------------
+
+  randomColor = random(colorSets[0].colors);
+  if (DEBUG_ON) {
+    // console.log("ColorSet[0] : " +colorSets[0]);
+    // console.log("ColorSet[0].colors : " +colorSets[0].colors);
+    // console.log("Random color : " +randomColor);
+  }
+  currentColor = color(randomColor.hue, randomColor.sat, randomColor.bright);
+
+}
+
 //-----------------------------------------------------------------------------------------
 //--------------------------------------- UTILITIES ---------------------------------------
 //-----------------------------------------------------------------------------------------
@@ -459,6 +565,13 @@ function setRandomNb() {
 }
 
 function areColorsEqual(color1, color2) {
+  // return (
+  //   red(color1) === red(color2) &&
+  //   green(color1) === green(color2) &&
+  //   blue(color1) === blue(color2) &&
+  //   alpha(color1) === alpha(color2)
+  // );
+
   if (DEBUG_UTILITIES_FUNCTIONS) {
     console.log("-- COLORS EQUAL --");
     console.log("color 1 : ");
@@ -481,22 +594,30 @@ function selectRandomColors(colorSet, numColors) {
   return shuffled.slice(0, numColors);
 }
 
-function findDominantConcept() {
-
-}
-
 function isColorWarm(color) {
-  if (color.hue > 0 && color.hue < 90 || color.hue > 270) {
+  if (color.hue > 0 && color.hue < 80 || color.hue > 290) {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur est warm");
+    }
     return true;
   } else {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur n'est pas warm");
+    }
     return false;
   }
 }
 
 function isColorActive(color) {
   if (color.sat > 50) {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur est active");
+    }
     return true;
   } else {
+    if (DEBUG_UTILITIES_FUNCTIONS) {
+      console.log("Ma couleur n'est pas active");
+    }
     return false;
   }
 }
@@ -526,13 +647,6 @@ function isParamOn(param) {
 }
 
 function error(text = "Une erreur s'est produite.") {
-  console.error(text);
-  alert(text);
   noLoop();
-}
-
-function resetCanvas() {
-  background(CANVAS_COLOR);
-  currentSet = [];
-  gridSets = [];
+  alert(text);
 }
