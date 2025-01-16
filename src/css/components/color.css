@@ -1,28 +1,54 @@
-.color {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-}
-.colorPalette
-{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
+#colorPage {
+  height: calc(100vh - 3rem);
 }
 
-.colorPalette_active {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
+#colorPage main {
+  height: 80%;
+  padding-inline: 10vw;
 }
 
-.colorPalette_active > div {
-    height: 2rem;
-    width: 2rem;
+#colorPaletteDisplay {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.colorPalette {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.colorPalette-name {
+  text-transform: uppercase;
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 1.25rem;
+}
+
+.colorPalette-info {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+}
+
+.colorPalette-info p {
+  text-align: center;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.colorPalette:nth-child(n):hover .colorPalette-info {
+  opacity: 1;
 }

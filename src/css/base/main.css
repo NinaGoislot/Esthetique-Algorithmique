@@ -21,6 +21,13 @@ main {
   justify-content: space-around;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Outfit", sans-serif;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+}
+
 .nina {
   flex-direction: row;
 }
