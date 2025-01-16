@@ -3,7 +3,7 @@ SliderTemperature.oninput = (_) => {
   const sliderColorTemperature = 255 * (1 - `${SliderTemperature.value}` / 100);
   SliderTemperature.style.setProperty(
     "--SliderColor",
-    `hsl(${sliderColorTemperature}, 75%, 25%)`
+    `hsl(${sliderColorTemperature}, 90%, 45%)`
   );
 };
 
@@ -76,4 +76,5 @@ submitButton.addEventListener("click", () => {
   document.getElementById("music-sheet").scrollIntoView({
     behavior: "smooth"
   });
+  
 });
