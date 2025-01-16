@@ -56,12 +56,12 @@
         "id": 5,
         "name": "Cold",
         "colors": [
-          { "hue": 100, "sat": 50, "bright": 60, "alpha": 1.0 },
-          { "hue": 110, "sat": 55, "bright": 65, "alpha": 1.0 },
-          { "hue": 120, "sat": 60, "bright": 70, "alpha": 1.0 },
-          { "hue": 130, "sat": 65, "bright": 75, "alpha": 1.0 },
-          { "hue": 140, "sat": 70, "bright": 80, "alpha": 1.0 },
-          { "hue": 150, "sat": 75, "bright": 85, "alpha": 1.0 }
+          { "hue": 188, "sat": 56, "bright": 30, "alpha": 1.0 },
+          { "hue": 230, "sat": 56, "bright": 43, "alpha": 1.0 },
+          { "hue": 209, "sat": 55, "bright": 69, "alpha": 1.0 },
+          { "hue": 209, "sat": 20, "bright": 80, "alpha": 1.0 },
+          { "hue": 211, "sat": 19, "bright": 99, "alpha": 1.0 },
+          { "hue": 247, "sat": 4, "bright": 99, "alpha": 1.0 }
         ],
         "couple" : [3,1]
       },
@@ -69,12 +69,12 @@
         "id": 6,
         "name": "Warm",
         "colors": [
-          { "hue": 188, "sat": 56, "bright": 30, "alpha": 1.0 },
-          { "hue": 230, "sat": 56, "bright": 43, "alpha": 1.0 },
-          { "hue": 209, "sat": 55, "bright": 69, "alpha": 1.0 },
-          { "hue": 209, "sat": 20, "bright": 80, "alpha": 1.0 },
-          { "hue": 201, "sat": 19, "bright": 99, "alpha": 1.0 },
-          { "hue": 247, "sat": 4, "bright": 99, "alpha": 1.0 }
+          { "hue": 7, "sat": 97, "bright": 41, "alpha": 1.0 },
+          { "hue": 4, "sat": 95, "bright": 69, "alpha": 1.0 },
+          { "hue": 35, "sat": 89, "bright": 99, "alpha": 1.0 },
+          { "hue": 21, "sat": 70, "bright": 100, "alpha": 1.0 },
+          { "hue": 23, "sat": 99, "bright": 100, "alpha": 1.0 },
+          { "hue": 53, "sat": 83, "bright": 100, "alpha": 1.0 }
         ],
         "couple" : [3,2]
       }

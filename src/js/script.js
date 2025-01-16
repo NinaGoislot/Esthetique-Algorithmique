@@ -36,7 +36,7 @@ const submitButton = document.getElementById("generateMusic");
 
 temperatureInput.addEventListener("input", () => {
   const temperatureValue = temperatureInput.value;
-  console.log(temperatureValue);
+  // console.log(temperatureValue);
 });
 
 actionInput.addEventListener("input", () => {
