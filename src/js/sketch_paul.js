@@ -29,7 +29,7 @@ const SPACING = 20;
 
 //Canvas = Zone de dessin totale
 const CANVAS_WIDTH = 1000;
-const CANVAS_HEIGHT = 300;
+const CANVAS_HEIGHT = 400;
 const CANVAS_COLOR = 255;
 
 //Layout = Zone de dessin du layout
@@ -126,7 +126,7 @@ function setup() {
 function draw() {
   if (play === false) {
     const SliderVibe = document.querySelector("input[name=vibe]");
-    SPEED = SliderVibe.value / 100 + 0.25;
+    SPEED = SliderVibe.value / 100 + 0.5;
     if (DEBUG_STEP_CODE_ON) {
       console.log("► STEP 3 : Je draw");
     }
@@ -218,6 +218,8 @@ function draw() {
     }
   }
 }
+
+//to add
 
 function playMetronome() {
   let metronome = new Audio("./music/metronome.mp3");
@@ -824,7 +826,6 @@ function compareSets(set1, set2) {
 const temperatureInput = document.getElementsByName("temperature")[0];
 const actionInput = document.getElementsByName("action")[0];
 const vibeInput = document.getElementsByName("vibe")[0];
-const harmonyInput = document.getElementsByName("harmony")[0];
 
 const submitButton = document.getElementById("generateMusic");
 
@@ -854,13 +855,11 @@ submitButton.addEventListener("click", () => {
   localStorage.setItem("temperature", temperatureInput.value);
   localStorage.setItem("action", actionInput.value);
   localStorage.setItem("vibe", vibeInput.value);
-  localStorage.setItem("harmony", harmonyInput.value);
 
   //GET LOCAL STORAGE VALUES
   document.getElementById("temperatureDisplay").innerHTML = localStorage.getItem("temperature");
   document.getElementById("actionDisplay").innerHTML = localStorage.getItem("action");
   document.getElementById("vibeDisplay").innerHTML = localStorage.getItem("vibe");
-  document.getElementById("harmonyDisplay").innerHTML = localStorage.getItem("harmony");
 
   //SCROLL TO MUSIC SHEET
   document.getElementById("music-sheet").scrollIntoView({

@@ -1,6 +1,8 @@
-Nina Goislot et Paul Marchiset
+<h1 style="text-align:center">Workshop - Esthétique algorithmique</h1>
 
-Workshop - Esthétique algorithmique
+<p style="text-align:center">Nina Goislot et Paul Marchiset</p>
+
+<br>
 
 <h2>Explication des algorithmes</h2>
 
