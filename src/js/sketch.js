@@ -48,15 +48,17 @@ const COLOR_WIDTH = GRID_WIDTH / COLORS_BY_SET;
 const COLOR_HEIGHT = GRID_HEIGHT / SETS_BY_GRID;
 
 //Autres variables
-let gridColors = [];
-let randomNb;
+let randomNb; //Nombre random entre 1 et 100 compris
 let currentColor;
 let currentSet = []; // Un set contient plusieurs currentColor
-let gridSets = []; // Une grid contient plusieurs currentSet
+let currentGridSets = []; // Une grid contient plusieurs currentSet
 
 let conceptsCouples = []; // Contient les couples de couleurs nommés et triés
 
 let colorCanvas;
+
+// Variables animations
+let layoutSets = [];
 
 //-----------------------------------------------------------------------------------------
 //----------------------------------------- CANVAS ----------------------------------------
@@ -125,9 +127,12 @@ function draw() {
     rect(MARGIN / 2 + k * GRID_WIDTH + k * SPACING, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
   }
 
+  layoutSets=[];
   for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) { //Définir Layout
+    currentGridSets=[];
     for (let i = 0; i < SETS_BY_GRID; i++) { // Définir Grid
       setCurrentSet();
+      currentGridSets.push(currentSet);
       for (let j = 0; j < COLORS_BY_SET; j++) { //Pour chaque couleur
 
         currentColor = currentSet[j];
@@ -137,6 +142,7 @@ function draw() {
         rect(MARGIN / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING, MARGIN / 2 + i * COLOR_HEIGHT, COLOR_WIDTH, COLOR_HEIGHT);
       }
     }
+    layoutSets.push(currentGridSets);
   }
 
   if (DEBUG_STEP_CODE_ON) {
@@ -672,12 +678,6 @@ function error(text = "Une erreur s'est produite.") {
   console.error(text);
   alert(text);
   noLoop();
-}
-
-function resetCanvas() {
-  background(CANVAS_COLOR);
-  currentSet = [];
-  gridSets = [];
 }
 
 //-----------------------------------------------------------------------------------------
