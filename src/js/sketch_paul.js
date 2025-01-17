@@ -340,6 +340,7 @@ function setCurrentSet() {
   if (DEBUG_STEP_CODE_ON) {
     console.log("► STEP 6 : Je récupère 4 couleurs pour le set");
   }
+  
   for (let i = 0; i < COLORS_BY_SET; i++) {
     correctColors = [];
     switch (i) {

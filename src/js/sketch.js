@@ -60,6 +60,13 @@ let colorCanvas;
 
 // Variables animations
 let layoutSets = [];
+let play = false;
+let counterColor = 0;
+let counterSet = 0;
+let counterGrid = 0;
+let firstRepetitionAnimation = true;
+
+let SPEED = 1;
 
 //-----------------------------------------------------------------------------------------
 //----------------------------------------- CANVAS ----------------------------------------
@@ -109,48 +116,110 @@ function setup() {
   colorMode(HSB)
   stroke('white');
   strokeWeight(0);
-
   noLoop();
-
 }
 
 function draw() {
-  if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP 3 : Je draw");
-  }
+  if (play === false) {
+    if (DEBUG_STEP_CODE_ON) {
+      console.log("► STEP 3 : Je draw");
+    }
 
-  frameRate(1);
-  fill(LAYOUT_COLOR);
-  rect(MARGIN_LAYOUT / 2, MARGIN_LAYOUT / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
+    const SliderVibe = document.querySelector("input[name=vibe]");
+    SPEED = SliderVibe.value / 100 + 0.25;
 
-  for (let k = 0; k < MAX_SETS / SETS_BY_GRID; k++) {
-    fill(GRID_COLOR);
-    rect(MARGIN_LAYOUT / 2 + k * GRID_WIDTH + k * SPACING_LAYOUT, MARGIN_LAYOUT / 2, GRID_WIDTH, GRID_HEIGHT);
-  }
+    frameRate(1);
+    fill(LAYOUT_COLOR);
+    rect(MARGIN_LAYOUT / 2, MARGIN_LAYOUT / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
 
-  layoutSets = [];
-  for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) { //Définir Layout
-    currentGridSets = [];
-    for (let i = 0; i < SETS_BY_GRID; i++) { // Définir Grid
-      setCurrentSet();
-      currentGridSets.push(currentSet);
-      for (let j = 0; j < COLORS_BY_SET; j++) { //Pour chaque couleur
+    for (let k = 0; k < MAX_SETS / SETS_BY_GRID; k++) {
+      fill(GRID_COLOR);
+      rect(MARGIN_LAYOUT / 2 + k * GRID_WIDTH + k * SPACING_LAYOUT, MARGIN_LAYOUT / 2, GRID_WIDTH, GRID_HEIGHT);
+    }
 
-        currentColor = currentSet[j];
+    layoutSets = [];
+    for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) { //Définir Layout
+      currentGridSets = [];
+      for (let i = 0; i < SETS_BY_GRID; i++) { // Définir Grid
+        setCurrentSet();
+        currentGridSets.push(currentSet);
+        for (let j = 0; j < COLORS_BY_SET; j++) { //Pour chaque couleur
 
-        fill(currentColor.hue, currentColor.sat, currentColor.bright);
+          currentColor = currentSet[j];
 
-        rect(MARGIN_LAYOUT / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING_LAYOUT, MARGIN_LAYOUT / 2 + i * COLOR_HEIGHT + i*SPACING_GRID, COLOR_WIDTH, COLOR_HEIGHT);
+          fill(currentColor.hue, currentColor.sat, currentColor.bright);
+
+          rect(MARGIN_LAYOUT / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING_LAYOUT, MARGIN_LAYOUT / 2 + i * COLOR_HEIGHT + i * SPACING_GRID, COLOR_WIDTH, COLOR_HEIGHT);
+        }
+      }
+      layoutSets.push(currentGridSets);
+    }
+
+    checkGridHue();
+    checkGridSat();
+    // checkGridBright();
+    reDraw();
+
+    if (DEBUG_STEP_CODE_ON) {
+      console.log("► STEP FINAL : fonction draw finie");
+    }
+  } else {
+    console.log("super");
+    frameRate(SPEED);
+    fill(LAYOUT_COLOR);
+    rect(MARGIN_LAYOUT / 2, MARGIN_LAYOUT / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
+
+    for (let k = 0; k < MAX_SETS / SETS_BY_GRID; k++) {
+      fill(GRID_COLOR);
+      rect(MARGIN_LAYOUT / 2 + k * GRID_WIDTH + k * SPACING_LAYOUT, MARGIN_LAYOUT / 2, GRID_WIDTH, GRID_HEIGHT);
+    }
+
+    for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) {
+      //Définir Layout
+      for (let i = 0; i < SETS_BY_GRID; i++) {
+        // Définir Grid
+        currentSet = layoutSets[l][i];
+        for (let j = 0; j < COLORS_BY_SET; j++) {
+          //Pour chaque couleur
+
+          currentColor = currentSet[j];
+          if (counterSet === i && counterGrid === l) {
+            fill(currentColor.hue, currentColor.sat, currentColor.bright);
+            playMusic(currentColor);
+          } else {
+            fill(currentColor.hue, currentColor.sat, currentColor.bright, 0.25);
+          }
+
+          rect(MARGIN_LAYOUT / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING_LAYOUT, MARGIN_LAYOUT / 2 + i * COLOR_HEIGHT + i * SPACING_GRID, COLOR_WIDTH, COLOR_HEIGHT);
+
+          console.log(counterColor);
+        }
+        counterColor = 0;
       }
     }
-    layoutSets.push(currentGridSets);
-  }
 
-  checkGridHue();
-  reDraw();
+    checkGridHue();
+    checkGridSat();
+    // checkGridBright();
+    reDraw();
 
-  if (DEBUG_STEP_CODE_ON) {
-    console.log("► STEP FINAL : fonction draw finie");
+    if (firstRepetitionAnimation) {
+      firstRepetitionAnimation = false;
+    } else {
+      if (compareSets(layoutSets[counterGrid][counterSet], layoutSets[layoutSets.length - 1][SETS_BY_GRID - 1])) {
+        stopAnimation();
+      } else {
+        if (counterSet < SETS_BY_GRID - 1) {
+          counterSet++;
+        } else {
+          counterSet = 0;
+          counterGrid++;
+        }
+        if (compareSets(layoutSets[counterGrid][counterSet], layoutSets[layoutSets.length - 1][SETS_BY_GRID - 1])) {
+          firstRepetitionAnimation = true;
+        }
+      }
+    }
   }
 }
 
@@ -174,7 +243,7 @@ function reDraw() {
         currentColor = currentSet[j];
         fill(currentColor.hue, currentColor.sat, currentColor.bright);
 
-        rect(MARGIN_LAYOUT / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING_LAYOUT, MARGIN_LAYOUT / 2 + i * COLOR_HEIGHT + i*SPACING_GRID, COLOR_WIDTH, COLOR_HEIGHT);
+        rect(MARGIN_LAYOUT / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING_LAYOUT, MARGIN_LAYOUT / 2 + i * COLOR_HEIGHT + i * SPACING_GRID, COLOR_WIDTH, COLOR_HEIGHT);
       }
     }
   }
@@ -223,7 +292,6 @@ function load() {
     return;
   }
 
-  // Je peux récupérer dynamiquement si je renomme le get item
   conceptsCouples.forEach((oneCouple) => {
     percentages.push({
       name: oneCouple.name,
@@ -277,6 +345,7 @@ function setCurrentSet() {
   if (DEBUG_STEP_CODE_ON) {
     console.log("► STEP 6 : Je récupère 4 couleurs pour le set");
   }
+
   for (let i = 0; i < COLORS_BY_SET; i++) {
     correctColors = [];
     switch (i) {
@@ -447,32 +516,6 @@ function setCurrentSet() {
               break;
             }
           }
-
-          // allSetsWithProba.forEach(setWithProba => {
-          //   currentProba += setWithProba.percent;
-
-          //   if (i==3){
-          //     console.log("---------------------------------------------------");
-          //     console.log("New proba : ");
-          //     console.log(currentProba);
-
-          //     console.log(currentProba + " >= " + randomNb);
-          //     console.log(currentProba >= randomNb);
-          //     console.log(setWithProba);
-          //   }
-
-          //   if (currentProba >= randomNb) {
-          //     correctColors = setWithProba.set;
-
-          //     if (i==3){
-          //       console.log("J'AI TROUVE !! La nouvelle couleur sera donc le set de : ");
-          //       console.log("---------------------------------------------------");
-          //     }
-          //   }
-
-
-
-          // });
         }
 
         if (DEBUG_STEP_CODE_ON) {
@@ -510,11 +553,6 @@ function setCurrentSet() {
 
         correctColors.push(newColor);
       }
-
-      if (i == 3) {
-        console.log("Pas assez de couleur");
-      }
-
     }
 
     if (DEBUG_STEP_CODE_ON) {
@@ -545,10 +583,6 @@ function setCurrentSet() {
         }
       }
     } while (exist);
-
-    if (i == 4) {
-      console.log(randomColor);
-    }
 
 
     finalSet.push(randomColor);
@@ -609,8 +643,60 @@ function getPercentage(couple) {
   }
 }
 
-function checkFinalLayout() {
 
+//-----------------------------------------------------------------------------------------
+//--------------------------------------- ANIMATION ---------------------------------------
+//-----------------------------------------------------------------------------------------
+
+function playAnimation() {
+  if (play) {
+    stopAnimation();
+  } else {
+    counterSet = 0;
+    counterGrid = 0;
+    play = true;
+    firstRepetitionAnimation = true;
+    loop();
+    draw();
+  }
+}
+
+function stopAnimation() {
+  play = false;
+  noLoop();
+  reDraw();
+}
+
+
+function playMetronome() {
+  let metronome = new Audio("./music/metronome.mp3");
+  metronome.play();
+}
+
+function playMusic(color) {
+  let hue = color.hue;
+  let sat = color.sat;
+  let octave = "middle";
+
+  if (sat >= 0 && sat < 30) {
+    octave = "grave";
+  } else if (sat >= 60 && sat < 100) {
+    octave = "aigu";
+  }
+
+  if (hue >= 0 && hue < 51) playSound(`${octave}/do`);
+  else if (hue >= 51 && hue < 102) playSound(`${octave}/re`);
+  else if (hue >= 102 && hue < 153) playSound(`${octave}/mi`);
+  else if (hue >= 153 && hue < 204) playSound(`${octave}/fa`);
+  else if (hue >= 204 && hue < 255) playSound(`${octave}/sol`);
+  else if (hue >= 255 && hue < 306) playSound(`${octave}/la`);
+  else if (hue >= 306 && hue <= 360) playSound(`${octave}/si`);
+}
+
+function playSound(note) {
+  let audio = new Audio(`./music/${note}.mp3`);
+  console.log(`Playing ${note}`);
+  audio.play();
 }
 
 //-----------------------------------------------------------------------------------------
@@ -690,11 +776,6 @@ function isColorBright(color) {
 function isParamOn(param) {
   setRandomNb();
 
-  // if(param.value < 50) {
-  //   console.log("PARAMETRE INFERIIIIIIIIIIIIIIIIIIEEEEEEEEEEEEEEEEEEEEEEUR")
-  //   console.log(param.value)
-  //   param.value = 100 - param.value;
-  // }
   if (randomNb <= param.value) {
     return true;
   } else {
@@ -954,9 +1035,6 @@ function adjustSat(layoutIndex, grid, keepActive) {
     }
   } while (wrongColor);
 
-  const activeSet = conceptsCouples.find((oneCouple) =>
-    oneCouple.name.includes("Active")
-  );
   if (keepActive) {
     // Saturation entre 60 et 90
     colorToAdjust.sat = Math.floor(Math.random() * (90 - 60 + 1)) + 60;
@@ -1003,7 +1081,7 @@ function checkGridBright() {
         } else {
           if (brightPercentage.value > 50) { // Si Bright domine
             adjustBright(i, layoutSets[i], true);
-          } else { 
+          } else {
             adjustBright(i, layoutSets[i], false);
           }
         }
@@ -1013,16 +1091,16 @@ function checkGridBright() {
           gridIsOkay = true;
           break;
         } else {
-          if (brightPercentage.value > 50) {
-            if (currentBrightPourcent < brightPercentage.value) { 
+          if (brightPercentage.value > 50) { // Si Bright domine
+            if (currentBrightPourcent < brightPercentage.value) { // Si je manque de bright
               adjustBright(i, layoutSets[i], true);
-            } else { 
+            } else { // J'ai trop de bright
               adjustBright(i, layoutSets[i], false);
             }
-          } else { 
-            if (currentBrightPourcent > brightPercentage.value) { 
+          } else {
+            if (currentBrightPourcent > brightPercentage.value) {
               adjustBright(i, layoutSets[i], false);
-            } else { 
+            } else {
               adjustBright(i, layoutSets[i], true);
             }
           }
@@ -1032,7 +1110,7 @@ function checkGridBright() {
   }
 }
 
-function adjustBright(layoutIndex, grid, keepActive) {
+function adjustBright(layoutIndex, grid, keepBright) {
   let wrongColor;
   let colorToAdjust;
   let randomSet;
@@ -1045,29 +1123,38 @@ function adjustBright(layoutIndex, grid, keepActive) {
 
     colorToAdjust = grid[randomSet][randomColor];
 
-    if (keepActive) {
-      if (isColorActive(colorToAdjust)) {
+    if (keepBright) {
+      if (isColorBright(colorToAdjust)) {
         wrongColor = true;
       }
     } else {
-      if (!isColorActive(colorToAdjust)) {
+      if (!isColorBright(colorToAdjust)) {
         wrongColor = true;
       }
     }
   } while (wrongColor);
 
-  const activeSet = conceptsCouples.find((oneCouple) =>
-    oneCouple.name.includes("Active")
-  );
-  if (keepActive) {
-    // Saturation entre 60 et 90
-    colorToAdjust.sat = Math.floor(Math.random() * (90 - 60 + 1)) + 60;
+  if (keepBright) {
+    colorToAdjust.bright = colorToAdjust.bright + 15;
   } else {
-    // Saturation entre 10 et 40
-    colorToAdjust.sat = Math.floor(Math.random() * (40 - 10 + 1)) + 10;
+    colorToAdjust.bright = colorToAdjust.bright - 15;
   }
 
   layoutSets[layoutIndex][randomSet][randomColor] = colorToAdjust;
+}
+
+function compareSets(set1, set2) {
+  if (set1.length !== set2.length) {
+    return false;
+  }
+
+  for (let i = 0; i < set1.length; i++) {
+    if (!areColorsEqual(set1[i], set2[i])) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function error(text = "Une erreur s'est produite.") {
@@ -1112,3 +1199,7 @@ submitButton.addEventListener("click", () => {
 
   updatePercent();
 });
+
+// ANIMATION 
+const playButton = document.getElementById("playButton");
+playButton.addEventListener("click", playAnimation);
