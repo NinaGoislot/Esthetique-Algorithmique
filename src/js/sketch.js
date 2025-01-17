@@ -8,7 +8,7 @@ let percentages = [];
 //-----------------------------------------------------------------------------------------
 //----------------------------------------- DEBUG -----------------------------------------
 //-----------------------------------------------------------------------------------------
-const DEBUG_ON = false; //Change this value to hide console
+const DEBUG_ON = true; //Change this value to hide console
 const DEBUG_SET_CREATION_ON = false; //Change this value to hide console
 const DEBUG_POURCENTAGE_ON = false; //Change this value to hide console
 const DEBUG_UTILITIES_FUNCTIONS = false; //Change this value to hide console
@@ -127,9 +127,9 @@ function draw() {
     rect(MARGIN / 2 + k * GRID_WIDTH + k * SPACING, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
   }
 
-  layoutSets=[];
+  layoutSets = [];
   for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) { //Définir Layout
-    currentGridSets=[];
+    currentGridSets = [];
     for (let i = 0; i < SETS_BY_GRID; i++) { // Définir Grid
       setCurrentSet();
       currentGridSets.push(currentSet);
@@ -281,7 +281,7 @@ function setCurrentSet() {
           if (checkWarmCouple) {
             if (checkActiveCouple) {
               if (checkBrightCouple) {
-                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
                   if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
                     if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                       correctColors.push(color);
@@ -289,7 +289,7 @@ function setCurrentSet() {
                   }
                 }
               } else {
-                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
                   if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
                     correctColors.push(color);
                   }
@@ -297,13 +297,13 @@ function setCurrentSet() {
               }
             } else {
               if (checkBrightCouple) {
-                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
                   if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
                     correctColors.push(color);
                   }
                 }
               } else {
-                if (isColorWarm(color) && warmPercentage.value <= 50 || !isColorWarm(color) && warmPercentage.value >= 50) {
+                if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
                   correctColors.push(color);
                 }
               }
@@ -336,10 +336,14 @@ function setCurrentSet() {
         break
       case 2:
         let coupleToChoose = percentages[0];
+
         percentages.forEach(percentCouple => {
-          if (percentCouple.value > coupleToChoose.value) {
+          const currentValue = Number(coupleToChoose.value);
+          const newValue = Number(percentCouple.value);
+
+          if (newValue > currentValue) {
             coupleToChoose = percentCouple;
-          } else if (percentCouple.value == percentCouple.value) {
+          } else if (currentValue == newValue) {
             setRandomNb();
             coupleToChoose = randomNb > 50 ? coupleToChoose : percentCouple;
           }
@@ -361,23 +365,12 @@ function setCurrentSet() {
         break
       default:
         let allSetsWithProba = [];
+        let setsProbaFull = []
         percentages.forEach(couplePercent => {
 
-          //Trouver le set dominant
-          let dominantSet = couplePercent.value > 50 ? 2 : 1;
-          if (couplePercent.value === 50) {
-            setRandomNb();
-            dominantSet = randomNb > 50 ? 2 : 1;
-          }
-
           // Stocker les % pour chaque set 
-          let percentSet1 = dominantSet == 1 ? 100 - couplePercent.value : couplePercent.value;
-          let percentSet2 = dominantSet == 2 ? couplePercent.value : 100 - couplePercent.value;
-
-          //Normaliser les % du set
-          const totalPercent = couplePercent.length * 2 * 100;
-          percentSet1 = percentSet1 * 100 / totalPercent;
-          percentSet2 = percentSet2 * 100 / totalPercent;
+          let percentSet1 = 100 - couplePercent.value;
+          let percentSet2 = couplePercent.value;
 
           //Récupérer les sets de couleurs
           const coupleColors = conceptsCouples.find((couple) =>
@@ -387,30 +380,71 @@ function setCurrentSet() {
           const colorsSet1 = coupleColors.colors.set1;
           const colorsSet2 = coupleColors.colors.set2;
 
-          //Stocker les couleurs et proba dans le tableau 
-          allSetsWithProba.push({
-            set: colorsSet1,
-            percent: percentSet1
-          });
+          if (percentSet1 == 100 || percentSet2 == 100) {
+            const setToPush = percentSet1 > percentSet2 ? colorsSet1 : colorsSet2;
+            setsProbaFull.push(setToPush);
+          } else {
+            //Normaliser les % du set
+            const totalPercent = conceptsCouples.length * 100;
+            percentSet1 = percentSet1 * 100 / totalPercent;
+            percentSet2 = percentSet2 * 100 / totalPercent;
 
-          allSetsWithProba.push({
-            set: colorsSet2,
-            percent: percentSet2
-          });
+            //Stocker les couleurs et proba dans le tableau 
+            allSetsWithProba.push({
+              set: colorsSet1,
+              percent: percentSet1
+            });
+
+            allSetsWithProba.push({
+              set: colorsSet2,
+              percent: percentSet2
+            });
+          }
         });
 
-        //Sélectionner au hasard un set
-        setRandomNb();
-        let currentProba = 0;
+        if (setsProbaFull.length > 0) {
+          correctColors = random(setsProbaFull);
+        } else {
+          //Sélectionner au hasard un set
+          setRandomNb();
+          let currentProba = 0;
 
-        allSetsWithProba.forEach(setWithProba => {
-          currentProba += setWithProba.percent;
+          for (let p = 0; p<allSetsWithProba.length;p++) {
+            currentProba += allSetsWithProba[p].percent;
 
-          if (currentProba >= randomNb) {
-            correctColors = setWithProba.set;
+            if (currentProba >= randomNb) {
+              correctColors = allSetsWithProba[p].set;
+              break;
+            }
           }
 
-        });
+          // allSetsWithProba.forEach(setWithProba => {
+          //   currentProba += setWithProba.percent;
+
+          //   if (i==3){
+          //     console.log("---------------------------------------------------");
+          //     console.log("New proba : ");
+          //     console.log(currentProba);
+
+          //     console.log(currentProba + " >= " + randomNb);
+          //     console.log(currentProba >= randomNb);
+          //     console.log(setWithProba);
+          //   }
+
+          //   if (currentProba >= randomNb) {
+          //     correctColors = setWithProba.set;
+
+          //     if (i==3){
+          //       console.log("J'AI TROUVE !! La nouvelle couleur sera donc le set de : ");
+          //       console.log("---------------------------------------------------");
+          //     }
+          //   }
+
+           
+
+          // });
+        }
+
         if (DEBUG_STEP_CODE_ON) {
           console.log("► STEP 6 - D : Plus de couleurs");
         }
@@ -446,6 +480,11 @@ function setCurrentSet() {
 
         correctColors.push(newColor);
       }
+
+      if (i==3){
+        console.log("Pas assez de couleur");
+      }
+
     }
 
     if (DEBUG_STEP_CODE_ON) {
@@ -464,15 +503,6 @@ function setCurrentSet() {
       let trucrandom = Math.floor(Math.random() * correctColors.length);
       randomColor = correctColors[trucrandom];
 
-      if (DEBUG_STEP_CODE_ON) {
-        // console.log("nombre random : ");
-        // console.log(trucrandom);
-        // console.log("RandomColor");
-        // console.log(randomColor);
-        // console.log("finalSet");
-        // console.log(finalSet);
-      }
-
       for (let m = 0; m < finalSet.length; m++) {
         const colorsEqual = areColorsEqual(randomColor, finalSet[m]);
         if (colorsEqual) {
@@ -485,6 +515,11 @@ function setCurrentSet() {
         }
       }
     } while (exist);
+
+    if (i==4){
+      console.log(randomColor);
+    }
+
 
     finalSet.push(randomColor);
 
@@ -620,51 +655,58 @@ function isColorBright(color) {
 
 function isParamOn(param) {
   setRandomNb();
+
+  // if(param.value < 50) {
+  //   console.log("PARAMETRE INFERIIIIIIIIIIIIIIIIIIEEEEEEEEEEEEEEEEEEEEEEUR")
+  //   console.log(param.value)
+  //   param.value = 100 - param.value;
+  // }
   if (randomNb <= param.value) {
     return true;
   } else {
     return false;
   }
 }
-function updatePercent(){
+
+function updatePercent() {
 
   percentages.forEach((couplePercent) => {
 
-  let localStorageItem;
+    let localStorageItem;
 
-  if(DEBUG_UPDATE_VALUES) {
-    console.log("→ Fonction updatePercent. ")
-  }
+    if (DEBUG_UPDATE_VALUES) {
+      console.log("→ Fonction updatePercent. ")
+    }
 
     //Couple Cold-Warm
     if (couplePercent.name == "Cold-Warm") {
-      localStorageItem = localStorage.getItem("vibe");
+      localStorageItem = localStorage.getItem("temperature");
 
       couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
 
-      if(DEBUG_UPDATE_VALUES) {
+      if (DEBUG_UPDATE_VALUES) {
         console.log("Nouveau Cold-Warm :" + couplePercent.value);
       }
     }
 
     //Couple Passive-Active
     if (couplePercent.name == "Passive-Active") {
-      localStorageItem = localStorage.getItem("temperature");
-
-      couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
-
-      if(DEBUG_UPDATE_VALUES) {
-        console.log("Nouveau Passive-Active :" + couplePercent.value);
-      }
-    }
-
-     //Couple Dull-Bright
-     if (couplePercent.name == "Dull-Bright") {
       localStorageItem = localStorage.getItem("action");
 
       couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
 
-      if(DEBUG_UPDATE_VALUES) {
+      if (DEBUG_UPDATE_VALUES) {
+        console.log("Nouveau Passive-Active :" + couplePercent.value);
+      }
+    }
+
+    //Couple Dull-Bright
+    if (couplePercent.name == "Dull-Bright") {
+      localStorageItem = localStorage.getItem("vibe");
+
+      couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
+
+      if (DEBUG_UPDATE_VALUES) {
         console.log("Nouveau Dull-Bright :" + couplePercent.value);
       }
     }
@@ -691,26 +733,6 @@ const harmonyInput = document.getElementsByName("harmony")[0];
 
 const submitButton = document.getElementById("generateMusic");
 
-// temperatureInput.addEventListener("input", () => {
-//   const temperatureValue = temperatureInput.value;
-//   // console.log(temperatureValue);
-// });
-
-// actionInput.addEventListener("input", () => {
-//   const actionValue = actionInput.value;
-//   console.log(actionValue);
-// });
-
-// vibeInput.addEventListener("input", () => {
-//   const vibeValue = vibeInput.value;
-//   console.log(vibeValue);
-// });
-
-// harmonyInput.addEventListener("input", () => {
-//   const harmonyValue = harmonyInput.value;
-//   console.log(harmonyValue);
-// });
-
 submitButton.addEventListener("click", () => {
   //ADD LOCAL STORAGE VALUES
   localStorage.clear();
@@ -733,6 +755,6 @@ submitButton.addEventListener("click", () => {
   document.getElementById("music-sheet").scrollIntoView({
     behavior: "smooth"
   });
-  
+
   updatePercent();
 });
