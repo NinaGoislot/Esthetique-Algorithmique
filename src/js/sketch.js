@@ -9,10 +9,11 @@ let percentages = [];
 //----------------------------------------- DEBUG -----------------------------------------
 //-----------------------------------------------------------------------------------------
 const DEBUG_ON = false; //Change this value to hide console
-const DEBUG_SET_CREATION_ON = true; //Change this value to hide console
+const DEBUG_SET_CREATION_ON = false; //Change this value to hide console
 const DEBUG_POURCENTAGE_ON = false; //Change this value to hide console
 const DEBUG_UTILITIES_FUNCTIONS = false; //Change this value to hide console
-const DEBUG_STEP_CODE_ON = true; //Change this value to hide console
+const DEBUG_STEP_CODE_ON = false; //Change this value to hide console
+const DEBUG_UPDATE_VALUES = true; //Change this value to hide console
 
 //-----------------------------------------------------------------------------------------
 //-------------------------------------- DECLARATION --------------------------------------
@@ -625,7 +626,7 @@ function updatePercent(){
 
   let localStorageItem;
 
-  if(DEBUG_UTILITIES_FUNCTIONS) {
+  if(DEBUG_UPDATE_VALUES) {
     console.log("→ Fonction updatePercent. ")
   }
 
@@ -635,7 +636,7 @@ function updatePercent(){
 
       couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
 
-      if(DEBUG_UTILITIES_FUNCTIONS) {
+      if(DEBUG_UPDATE_VALUES) {
         console.log("Nouveau Cold-Warm :" + couplePercent.value);
       }
     }
@@ -646,7 +647,7 @@ function updatePercent(){
 
       couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
 
-      if(DEBUG_UTILITIES_FUNCTIONS) {
+      if(DEBUG_UPDATE_VALUES) {
         console.log("Nouveau Passive-Active :" + couplePercent.value);
       }
     }
@@ -657,11 +658,13 @@ function updatePercent(){
 
       couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
 
-      if(DEBUG_UTILITIES_FUNCTIONS) {
+      if(DEBUG_UPDATE_VALUES) {
         console.log("Nouveau Dull-Bright :" + couplePercent.value);
       }
     }
   });
+
+  draw();
 }
 
 
@@ -676,3 +679,60 @@ function resetCanvas() {
   currentSet = [];
   gridSets = [];
 }
+
+//-----------------------------------------------------------------------------------------
+//------------------------------------ EVENT LISTENERS ------------------------------------
+//-----------------------------------------------------------------------------------------
+
+const temperatureInput = document.getElementsByName("temperature")[0];
+const actionInput = document.getElementsByName("action")[0];
+const vibeInput = document.getElementsByName("vibe")[0];
+const harmonyInput = document.getElementsByName("harmony")[0];
+
+const submitButton = document.getElementById("generateMusic");
+
+// temperatureInput.addEventListener("input", () => {
+//   const temperatureValue = temperatureInput.value;
+//   // console.log(temperatureValue);
+// });
+
+// actionInput.addEventListener("input", () => {
+//   const actionValue = actionInput.value;
+//   console.log(actionValue);
+// });
+
+// vibeInput.addEventListener("input", () => {
+//   const vibeValue = vibeInput.value;
+//   console.log(vibeValue);
+// });
+
+// harmonyInput.addEventListener("input", () => {
+//   const harmonyValue = harmonyInput.value;
+//   console.log(harmonyValue);
+// });
+
+submitButton.addEventListener("click", () => {
+  //ADD LOCAL STORAGE VALUES
+  localStorage.clear();
+  localStorage.setItem("temperature", temperatureInput.value);
+  localStorage.setItem("action", actionInput.value);
+  localStorage.setItem("vibe", vibeInput.value);
+  localStorage.setItem("harmony", harmonyInput.value);
+
+  //GET LOCAL STORAGE VALUES
+  document.getElementById("temperatureDisplay").innerHTML =
+    localStorage.getItem("temperature");
+  document.getElementById("actionDisplay").innerHTML =
+    localStorage.getItem("action");
+  document.getElementById("vibeDisplay").innerHTML =
+    localStorage.getItem("vibe");
+  document.getElementById("harmonyDisplay").innerHTML =
+    localStorage.getItem("harmony");
+
+  //SCROLL TO MUSIC SHEET
+  document.getElementById("music-sheet").scrollIntoView({
+    behavior: "smooth"
+  });
+  
+  updatePercent();
+});
