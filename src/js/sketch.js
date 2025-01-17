@@ -13,7 +13,8 @@ const DEBUG_SET_CREATION_ON = false; //Change this value to hide console
 const DEBUG_POURCENTAGE_ON = false; //Change this value to hide console
 const DEBUG_UTILITIES_FUNCTIONS = false; //Change this value to hide console
 const DEBUG_STEP_CODE_ON = false; //Change this value to hide console
-const DEBUG_UPDATE_VALUES = true; //Change this value to hide console
+const DEBUG_UPDATE_VALUES = false; //Change this value to hide console
+const DEBUG_ANIMATION_ON = false; //Change this value to hide console
 
 //-----------------------------------------------------------------------------------------
 //-------------------------------------- DECLARATION --------------------------------------
@@ -174,6 +175,9 @@ function draw() {
       rect(MARGIN_LAYOUT / 2 + k * GRID_WIDTH + k * SPACING_LAYOUT, MARGIN_LAYOUT / 2, GRID_WIDTH, GRID_HEIGHT);
     }
 
+    console.log("CounterSet : " + counterSet);
+    console.log("CounterGrid : " + counterGrid);
+
     for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) {
       //Définir Layout
       for (let i = 0; i < SETS_BY_GRID; i++) {
@@ -197,11 +201,6 @@ function draw() {
         counterColor = 0;
       }
     }
-
-    checkGridHue();
-    // checkGridSat();
-    // checkGridBright();
-    reDraw();
 
     if (firstRepetitionAnimation) {
       firstRepetitionAnimation = false;
@@ -650,7 +649,8 @@ function getPercentage(couple) {
 
 function playAnimation() {
   if (play) {
-    stopAnimation();
+    noLoop();
+    play = false;
   } else {
     counterSet = 0;
     counterGrid = 0;
@@ -695,7 +695,9 @@ function playMusic(color) {
 
 function playSound(note) {
   let audio = new Audio(`./music/${note}.mp3`);
-  console.log(`Playing ${note}`);
+  if (DEBUG_ANIMATION_ON) {
+    console.log(`Playing ${note}`);
+  }
   audio.play();
 }
 
