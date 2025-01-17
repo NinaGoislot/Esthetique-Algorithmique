@@ -1170,7 +1170,7 @@ function error(text = "Une erreur s'est produite.") {
 const temperatureInput = document.getElementsByName("temperature")[0];
 const actionInput = document.getElementsByName("action")[0];
 const vibeInput = document.getElementsByName("vibe")[0];
-const harmonyInput = document.getElementsByName("harmony")[0];
+// const harmonyInput = document.getElementsByName("harmony")[0];
 
 const submitButton = document.getElementById("generateMusic");
 
@@ -1180,7 +1180,7 @@ submitButton.addEventListener("click", () => {
   localStorage.setItem("temperature", temperatureInput.value);
   localStorage.setItem("action", actionInput.value);
   localStorage.setItem("vibe", vibeInput.value);
-  localStorage.setItem("harmony", harmonyInput.value);
+  // localStorage.setItem("harmony", harmonyInput.value);
 
   //GET LOCAL STORAGE VALUES
   document.getElementById("temperatureDisplay").innerHTML =
@@ -1189,8 +1189,8 @@ submitButton.addEventListener("click", () => {
     localStorage.getItem("action");
   document.getElementById("vibeDisplay").innerHTML =
     localStorage.getItem("vibe");
-  document.getElementById("harmonyDisplay").innerHTML =
-    localStorage.getItem("harmony");
+  // document.getElementById("harmonyDisplay").innerHTML =
+  //   localStorage.getItem("harmony");
 
   //SCROLL TO MUSIC SHEET
   document.getElementById("music-sheet").scrollIntoView({
