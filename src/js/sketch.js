@@ -145,8 +145,37 @@ function draw() {
     layoutSets.push(currentGridSets);
   }
 
+  checkGridHue();
+  reDraw();
+
   if (DEBUG_STEP_CODE_ON) {
     console.log("► STEP FINAL : fonction draw finie");
+  }
+}
+
+function reDraw() {
+  fill(LAYOUT_COLOR);
+  rect(MARGIN / 2, MARGIN / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
+
+  for (let k = 0; k < MAX_SETS / SETS_BY_GRID; k++) {
+    fill(GRID_COLOR);
+    rect(MARGIN / 2 + k * GRID_WIDTH + k * SPACING, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
+  }
+
+  for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) {
+    //Définir Layout
+    for (let i = 0; i < SETS_BY_GRID; i++) {
+      // Définir Grid
+      currentSet = layoutSets[l][i];
+      for (let j = 0; j < COLORS_BY_SET; j++) {
+        //Pour chaque couleur
+
+        currentColor = currentSet[j];
+        fill(currentColor.hue, currentColor.sat, currentColor.bright);
+
+        rect(MARGIN / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING, MARGIN / 2 + i * COLOR_HEIGHT, COLOR_WIDTH, COLOR_HEIGHT);
+      }
+    }
   }
 }
 
@@ -409,7 +438,7 @@ function setCurrentSet() {
           setRandomNb();
           let currentProba = 0;
 
-          for (let p = 0; p<allSetsWithProba.length;p++) {
+          for (let p = 0; p < allSetsWithProba.length; p++) {
             currentProba += allSetsWithProba[p].percent;
 
             if (currentProba >= randomNb) {
@@ -440,7 +469,7 @@ function setCurrentSet() {
           //     }
           //   }
 
-           
+
 
           // });
         }
@@ -481,7 +510,7 @@ function setCurrentSet() {
         correctColors.push(newColor);
       }
 
-      if (i==3){
+      if (i == 3) {
         console.log("Pas assez de couleur");
       }
 
@@ -516,7 +545,7 @@ function setCurrentSet() {
       }
     } while (exist);
 
-    if (i==4){
+    if (i == 4) {
       console.log(randomColor);
     }
 
@@ -577,6 +606,10 @@ function getPercentage(couple) {
       return percentages[i].value;
     }
   }
+}
+
+function checkFinalLayout() {
+
 }
 
 //-----------------------------------------------------------------------------------------
@@ -715,6 +748,326 @@ function updatePercent() {
   draw();
 }
 
+function checkGridHue() {
+  const warmPercentage = percentages.find((percentage) =>
+    percentage.name.includes("Warm")
+  );
+
+  let warmCount = 0;
+  let gridIsOkay;
+
+  for (let i = 0; i < layoutSets.length; i++) { //Pour chaque grid
+    warmCount = 0;
+
+    do {
+
+      warmCount = 0;
+      gridIsOkay = false
+      for (let j = 0; j < SETS_BY_GRID; j++) { //Pour chaque set
+        for (let k = 0; k < COLORS_BY_SET; k++) {
+          if (layoutSets[i][j][k]) {
+            if (isColorWarm(layoutSets[i][j][k])) {
+              warmCount++;
+            }
+          }
+        }
+      }
+
+      const maxSize = SETS_BY_GRID * COLORS_BY_SET;
+      const currentWarmPourcent = (warmCount * 100) / maxSize;
+
+      if (warmPercentage.value == 100 || warmPercentage.value == 0) {
+        if (currentWarmPourcent == 100 || currentWarmPourcent == 0) {
+          gridIsOkay = true;
+          break;
+        } else {
+          if (warmPercentage.value > 50) { // Si Warm domine
+            adjustHue(i, layoutSets[i], true);
+          } else { // Si Cold domine
+            adjustHue(i, layoutSets[i], false);
+          }
+        }
+      } else {
+
+        if (Math.abs(currentWarmPourcent - warmPercentage.value) <= 5) { // Les deux nombres sont égaux à 5 près
+          gridIsOkay = true;
+          break;
+        } else {
+          if (warmPercentage.value > 50) { // Si Warm domine
+            if (currentWarmPourcent < warmPercentage.value) { // Si je manque de warm
+              adjustHue(i, layoutSets[i], true);
+            } else { // J'ai trop de warm
+              adjustHue(i, layoutSets[i], false);
+            }
+          } else { // Si Cold domine
+            if (currentWarmPourcent > warmPercentage.value) { // Si je manque de Cold
+              adjustHue(i, layoutSets[i], false);
+            } else { // J'ai trop de cold
+              adjustHue(i, layoutSets[i], true);
+            }
+          }
+        }
+      }
+    } while (!gridIsOkay);
+  }
+}
+
+function adjustHue(layoutIndex, grid, keepWarm) {
+  let wrongColor;
+  let colorToAdjust;
+  let randomSet;
+  let randomColor;
+
+  do {
+    wrongColor = false
+    randomSet = Math.floor(Math.random() * SETS_BY_GRID);
+    randomColor = Math.floor(Math.random() * COLORS_BY_SET);
+
+    colorToAdjust = grid[randomSet][randomColor];
+
+    if (keepWarm) {
+      if (isColorWarm(colorToAdjust)) {
+        wrongColor = true;
+      }
+    } else {
+      if (!isColorWarm(colorToAdjust)) {
+        wrongColor = true;
+      }
+    }
+  } while (wrongColor);
+
+  const warmSet = conceptsCouples.find((oneCouple) =>
+    oneCouple.name.includes("Warm")
+  );
+  if (keepWarm) {
+    let colorIsUnique;
+    do {
+      colorIsUnique = true;
+      colorToAdjust = random(warmSet.colors.set2);
+
+      // Vérifier si la nouvelle couleur est déjà dans le tableau
+      if (grid[randomSet].some((existingColor) => areColorsEqual(existingColor, colorToAdjust))) {
+        colorIsUnique = false;
+      }
+    } while (!colorIsUnique);
+  } else {
+    do {
+      colorIsUnique = true;
+      colorToAdjust = random(warmSet.colors.set1);
+
+      // Vérifier si la nouvelle couleur est déjà dans le tableau
+      if (grid[randomSet].some((existingColor) => areColorsEqual(existingColor, colorToAdjust))) {
+        colorIsUnique = false;
+      }
+    } while (!colorIsUnique);
+  }
+
+  layoutSets[layoutIndex][randomSet][randomColor] = colorToAdjust;
+}
+
+function checkGridSat() {
+  const activePercentage = percentages.find((percentage) =>
+    percentage.name.includes("Active")
+  );
+
+  let activeCount = 0;
+  let gridIsOkay;
+
+  for (let i = 0; i < layoutSets.length; i++) { //Pour chaque grid
+    activeCount = 0;
+
+    do {
+
+      activeCount = 0;
+      gridIsOkay = false
+      for (let j = 0; j < SETS_BY_GRID; j++) { //Pour chaque set
+        for (let k = 0; k < COLORS_BY_SET; k++) {
+          if (layoutSets[i][j][k]) {
+            if (isColorActive(layoutSets[i][j][k])) {
+              activeCount++;
+            }
+          }
+        }
+      }
+
+      const maxSize = SETS_BY_GRID * COLORS_BY_SET;
+      const currentActivePourcent = (activeCount * 100) / maxSize;
+
+      if (activePercentage.value == 100 || activePercentage.value == 0) {
+        if (currentActivePourcent == 100 || currentActivePourcent == 0) {
+          gridIsOkay = true;
+          break;
+        } else {
+          if (activePercentage.value > 50) { // Si Active domine
+            adjustSat(i, layoutSets[i], true);
+          } else { // Si Passive domine
+            adjustSat(i, layoutSets[i], false);
+          }
+        }
+      } else {
+
+        if (Math.abs(currentActivePourcent - activePercentage.value) <= 5) { // Les deux nombres sont égaux à 5 près
+          gridIsOkay = true;
+          break;
+        } else {
+          if (activePercentage.value > 50) { // Si Active domine
+            if (currentActivePourcent < activePercentage.value) { // Si je manque de active
+              adjustSat(i, layoutSets[i], true);
+            } else { // J'ai trop de active
+              adjustSat(i, layoutSets[i], false);
+            }
+          } else { // Si Passive domine
+            if (currentActivePourcent > activePercentage.value) { // Si je manque de passive
+              adjustSat(i, layoutSets[i], false);
+            } else { // J'ai trop de passive
+              adjustSat(i, layoutSets[i], true);
+            }
+          }
+        }
+      }
+    } while (!gridIsOkay);
+  }
+}
+
+function adjustSat(layoutIndex, grid, keepActive) {
+  let wrongColor;
+  let colorToAdjust;
+  let randomSet;
+  let randomColor;
+
+  do {
+    wrongColor = false
+    randomSet = Math.floor(Math.random() * SETS_BY_GRID);
+    randomColor = Math.floor(Math.random() * COLORS_BY_SET);
+
+    colorToAdjust = grid[randomSet][randomColor];
+
+    if (keepActive) {
+      if (isColorActive(colorToAdjust)) {
+        wrongColor = true;
+      }
+    } else {
+      if (!isColorActive(colorToAdjust)) {
+        wrongColor = true;
+      }
+    }
+  } while (wrongColor);
+
+  const activeSet = conceptsCouples.find((oneCouple) =>
+    oneCouple.name.includes("Active")
+  );
+  if (keepActive) {
+    // Saturation entre 60 et 90
+    colorToAdjust.sat = Math.floor(Math.random() * (90 - 60 + 1)) + 60;
+  } else {
+    // Saturation entre 10 et 40
+    colorToAdjust.sat = Math.floor(Math.random() * (40 - 10 + 1)) + 10;
+  }
+
+  layoutSets[layoutIndex][randomSet][randomColor] = colorToAdjust;
+}
+
+function checkGridBright() {
+  const brightPercentage = percentages.find((percentage) =>
+    percentage.name.includes("Bright")
+  );
+
+  let brightCount = 0;
+  let gridIsOkay;
+
+  for (let i = 0; i < layoutSets.length; i++) { //Pour chaque grid
+    brightCount = 0;
+
+    do {
+
+      brightCount = 0;
+      gridIsOkay = false
+      for (let j = 0; j < SETS_BY_GRID; j++) { //Pour chaque set
+        for (let k = 0; k < COLORS_BY_SET; k++) {
+          if (layoutSets[i][j][k]) {
+            if (isColorBright(layoutSets[i][j][k])) {
+              brightCount++;
+            }
+          }
+        }
+      }
+
+      const maxSize = SETS_BY_GRID * COLORS_BY_SET;
+      const currentBrightPourcent = (brightCount * 100) / maxSize;
+
+      if (brightPercentage.value == 100 || brightPercentage.value == 0) {
+        if (currentBrightPourcent == 100 || currentBrightPourcent == 0) {
+          gridIsOkay = true;
+          break;
+        } else {
+          if (brightPercentage.value > 50) { // Si Bright domine
+            adjustBright(i, layoutSets[i], true);
+          } else { 
+            adjustBright(i, layoutSets[i], false);
+          }
+        }
+      } else {
+
+        if (Math.abs(currentBrightPourcent - brightPercentage.value) <= 5) { // Les deux nombres sont égaux à 5 près
+          gridIsOkay = true;
+          break;
+        } else {
+          if (brightPercentage.value > 50) {
+            if (currentBrightPourcent < brightPercentage.value) { 
+              adjustBright(i, layoutSets[i], true);
+            } else { 
+              adjustBright(i, layoutSets[i], false);
+            }
+          } else { 
+            if (currentBrightPourcent > brightPercentage.value) { 
+              adjustBright(i, layoutSets[i], false);
+            } else { 
+              adjustBright(i, layoutSets[i], true);
+            }
+          }
+        }
+      }
+    } while (!gridIsOkay);
+  }
+}
+
+function adjustBright(layoutIndex, grid, keepActive) {
+  let wrongColor;
+  let colorToAdjust;
+  let randomSet;
+  let randomColor;
+
+  do {
+    wrongColor = false
+    randomSet = Math.floor(Math.random() * SETS_BY_GRID);
+    randomColor = Math.floor(Math.random() * COLORS_BY_SET);
+
+    colorToAdjust = grid[randomSet][randomColor];
+
+    if (keepActive) {
+      if (isColorActive(colorToAdjust)) {
+        wrongColor = true;
+      }
+    } else {
+      if (!isColorActive(colorToAdjust)) {
+        wrongColor = true;
+      }
+    }
+  } while (wrongColor);
+
+  const activeSet = conceptsCouples.find((oneCouple) =>
+    oneCouple.name.includes("Active")
+  );
+  if (keepActive) {
+    // Saturation entre 60 et 90
+    colorToAdjust.sat = Math.floor(Math.random() * (90 - 60 + 1)) + 60;
+  } else {
+    // Saturation entre 10 et 40
+    colorToAdjust.sat = Math.floor(Math.random() * (40 - 10 + 1)) + 10;
+  }
+
+  layoutSets[layoutIndex][randomSet][randomColor] = colorToAdjust;
+}
 
 function error(text = "Une erreur s'est produite.") {
   console.error(text);
