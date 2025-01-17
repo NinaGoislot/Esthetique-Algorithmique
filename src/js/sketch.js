@@ -156,7 +156,7 @@ function draw() {
     }
 
     checkGridHue();
-    checkGridSat();
+    // checkGridSat();
     // checkGridBright();
     reDraw();
 
@@ -199,7 +199,7 @@ function draw() {
     }
 
     checkGridHue();
-    checkGridSat();
+    // checkGridSat();
     // checkGridBright();
     reDraw();
 
