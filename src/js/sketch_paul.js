@@ -46,6 +46,8 @@ const GRID_COLOR = 255;
 const COLOR_WIDTH = GRID_WIDTH / COLORS_BY_SET;
 const COLOR_HEIGHT = GRID_HEIGHT / SETS_BY_GRID;
 
+let SPEED = 1;
+
 //Autres variables
 let randomNb; //Nombre random entre 1 et 100 compris
 let currentColor;
@@ -123,7 +125,8 @@ function setup() {
 //to update
 function draw() {
   if (play === false) {
-    console.log("tocard");
+    const SliderVibe = document.querySelector("input[name=vibe]");
+    SPEED = SliderVibe.value / 100 + 0.25;
     if (DEBUG_STEP_CODE_ON) {
       console.log("► STEP 3 : Je draw");
     }
@@ -162,8 +165,9 @@ function draw() {
       console.log("► STEP FINAL : fonction draw finie");
     }
   } else {
+    
     console.log("super");
-    frameRate(1);
+    frameRate(SPEED);
     fill(LAYOUT_COLOR);
     rect(MARGIN / 2, MARGIN / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
 
@@ -222,12 +226,12 @@ function playMetronome() {
 
 function playMusic(color) {
   let hue = color.hue;
-  let bright = color.bright;
+  let sat = color.sat;
   let octave = "middle";
 
-  if (bright >= 0 && bright < 30) {
+  if (sat >= 0 && sat < 30) {
     octave = "grave";
-  } else if (bright >= 60 && bright < 100) {
+  } else if (sat >= 60 && sat < 100) {
     octave = "aigu";
   }
 
