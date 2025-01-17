@@ -5,7 +5,6 @@ button {
     border-radius: 0.5rem;
     background: none;
     border: 1px solid #000;
-    background-color: white;
     cursor: pointer;
     text-transform: uppercase;
     animate: 0.5s;
