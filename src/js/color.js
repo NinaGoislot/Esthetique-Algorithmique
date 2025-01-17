@@ -1,7 +1,5 @@
 let data;
 
-let oneColor;
-
 const CANVAS_WIDTH = 550;
 const CANVAS_HEIGHT = 80;
 

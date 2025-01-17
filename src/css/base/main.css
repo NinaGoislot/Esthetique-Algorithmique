@@ -58,6 +58,28 @@ p {
   font-weight: 700;
 }
 
+.music-sheet_header
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.music-sheet_header a {
+  text-decoration: none;
+  color: #000;
+  font-family: "Outfit", sans-serif;
+  font-weight: 300;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.music-sheet_header a:hover {
+ text-decoration: underline;
+}
+
 .color-values {
   display: flex;
   justify-content: center;

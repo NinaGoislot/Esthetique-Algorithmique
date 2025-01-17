@@ -10,7 +10,6 @@
           { "hue": 94, "sat": 50, "bright": 78, "alpha": 1.0 },
           { "hue": 36, "sat": 62, "bright": 89, "alpha": 1.0 },
           { "hue": 51, "sat": 16, "bright": 93, "alpha": 1.0 }
-          
         ],
         "couple" : [1,1]
       },
