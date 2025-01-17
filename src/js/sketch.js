@@ -9,7 +9,7 @@ let percentages = [];
 //----------------------------------------- DEBUG -----------------------------------------
 //-----------------------------------------------------------------------------------------
 const DEBUG_ON = false; //Change this value to hide console
-const DEBUG_SET_CREATION_ON = false; //Change this value to hide console
+const DEBUG_SET_CREATION_ON = true; //Change this value to hide console
 const DEBUG_POURCENTAGE_ON = false; //Change this value to hide console
 const DEBUG_UTILITIES_FUNCTIONS = false; //Change this value to hide console
 const DEBUG_STEP_CODE_ON = true; //Change this value to hide console
@@ -21,6 +21,7 @@ const DEBUG_STEP_CODE_ON = true; //Change this value to hide console
 const MAX_SETS = 20;
 const COLORS_BY_SET = 4; //Nb couleurs par ligne de chaque bloc (largeur d'une grille)
 const SETS_BY_GRID = 4; //Nb de lignes de chaque bloc (hauteur)
+const PERCENTS_DEFAULT = 40;
 
 const MARGIN = 100;
 const SPACING = 20;
@@ -150,15 +151,6 @@ function load() {
   colorSets = data.colorSets;
 
   // ---------------------------------------------------
-  // -- Initialisation de la grille suivi de couleurs --
-  for (let i = 0; i < SETS_BY_GRID; i++) {
-    gridColors[i] = [];
-    for (let j = 0; j < COLORS_BY_SET; j++) {
-      gridColors[i][j] = null;
-    }
-  }
-
-  // ---------------------------------------------------
   // ---------------- Check les couples ----------------
   colorCouples = [...new Set(colorSets.map((set) => set.couple[0]))];
   colorCouples.forEach((coupleIndex) => {
@@ -198,7 +190,7 @@ function load() {
   conceptsCouples.forEach((oneCouple) => {
     percentages.push({
       name: oneCouple.name,
-      value: 20
+      value: PERCENTS_DEFAULT
     });
   });
 
@@ -336,38 +328,85 @@ function setCurrentSet() {
         }
         break
       case 2:
-        flatPossibleColors.forEach(color => {
-          if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
-                correctColors.push(color);
-              }
-            }
+        let coupleToChoose = percentages[0];
+        percentages.forEach(percentCouple => {
+          if (percentCouple.value > coupleToChoose.value) {
+            coupleToChoose = percentCouple;
+          } else if (percentCouple.value == percentCouple.value) {
+            setRandomNb();
+            coupleToChoose = randomNb > 50 ? coupleToChoose : percentCouple;
           }
         });
+
+        const coupleValues = conceptsCouples.find((couple) =>
+          couple.name == coupleToChoose.name
+        );
+
+        correctColors = coupleToChoose.value > 50 ? coupleValues.colors.set2 : coupleValues.colors.set1;
+
         if (DEBUG_STEP_CODE_ON) {
           console.log("► STEP 6 - C : Troisième couleur");
         }
+
+        if (DEBUG_SET_CREATION_ON) {
+          console.log("Set à % dominant : " + coupleToChoose.name);
+        }
         break
       default:
-        flatPossibleColors.forEach(color => {
-          if (isColorWarm(color) && warmPercentage.value >= 50 || !isColorWarm(color) && warmPercentage.value <= 50) {
-            if (isColorActive(color) && activePercentage.value >= 50 || !isColorActive(color) && activePercentage.value <= 50) {
-              if (isColorBright(color) && brightPercentage.value >= 50 || !isColorBright(color) && brightPercentage.value <= 50) {
-                correctColors.push(color);
-              }
-            }
+        let allSetsWithProba = [];
+        percentages.forEach(couplePercent => {
+
+          //Trouver le set dominant
+          let dominantSet = couplePercent.value > 50 ? 2 : 1;
+          if (couplePercent.value === 50) {
+            setRandomNb();
+            dominantSet = randomNb > 50 ? 2 : 1;
+          }
+
+          // Stocker les % pour chaque set 
+          let percentSet1 = dominantSet == 1 ? 100 - couplePercent.value : couplePercent.value;
+          let percentSet2 = dominantSet == 2 ? couplePercent.value : 100 - couplePercent.value;
+
+          //Normaliser les % du set
+          const totalPercent = couplePercent.length * 2 * 100;
+          percentSet1 = percentSet1 * 100 / totalPercent;
+          percentSet2 = percentSet2 * 100 / totalPercent;
+
+          //Récupérer les sets de couleurs
+          const coupleColors = conceptsCouples.find((couple) =>
+            couple.name == couplePercent.name
+          );
+
+          const colorsSet1 = coupleColors.colors.set1;
+          const colorsSet2 = coupleColors.colors.set2;
+
+          //Stocker les couleurs et proba dans le tableau 
+          allSetsWithProba.push({
+            set: colorsSet1,
+            percent: percentSet1
+          });
+
+          allSetsWithProba.push({
+            set: colorsSet2,
+            percent: percentSet2
+          });
+        });
+
+        //Sélectionner au hasard un set
+        setRandomNb();
+        let currentProba = 0;
+
+        allSetsWithProba.forEach(setWithProba => {
+          currentProba += setWithProba.percent;
+
+          if (currentProba >= randomNb) {
+            correctColors = setWithProba.set;
           }
         });
         if (DEBUG_STEP_CODE_ON) {
           console.log("► STEP 6 - D : Plus de couleurs");
         }
         break
-    }
-
-    if (DEBUG_SET_CREATION_ON) {
-      // console.log("CorrectColors before pushing");
-      // console.log(correctColors);
     }
 
     if (correctColors.length < COLORS_BY_SET) {
@@ -386,17 +425,17 @@ function setCurrentSet() {
       while (correctColors.length < COLORS_BY_SET) {
         let newColor;
         let colorIsUnique;
-    
+
         do {
           colorIsUnique = true;
           newColor = random(set);
-    
+
           // Vérifier si la nouvelle couleur est déjà dans le tableau
           if (correctColors.some((existingColor) => areColorsEqual(existingColor, newColor))) {
             colorIsUnique = false;
           }
         } while (!colorIsUnique);
-    
+
         correctColors.push(newColor);
       }
     }
