@@ -402,6 +402,7 @@ function setCurrentSet() {
           if (currentProba >= randomNb) {
             correctColors = setWithProba.set;
           }
+
         });
         if (DEBUG_STEP_CODE_ON) {
           console.log("► STEP 6 - D : Plus de couleurs");
@@ -618,6 +619,51 @@ function isParamOn(param) {
     return false;
   }
 }
+function updatePercent(){
+
+  percentages.forEach((couplePercent) => {
+
+  let localStorageItem;
+
+  if(DEBUG_UTILITIES_FUNCTIONS) {
+    console.log("→ Fonction updatePercent. ")
+  }
+
+    //Couple Cold-Warm
+    if (couplePercent.name == "Cold-Warm") {
+      localStorageItem = localStorage.getItem("vibe");
+
+      couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
+
+      if(DEBUG_UTILITIES_FUNCTIONS) {
+        console.log("Nouveau Cold-Warm :" + couplePercent.value);
+      }
+    }
+
+    //Couple Passive-Active
+    if (couplePercent.name == "Passive-Active") {
+      localStorageItem = localStorage.getItem("temperature");
+
+      couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
+
+      if(DEBUG_UTILITIES_FUNCTIONS) {
+        console.log("Nouveau Passive-Active :" + couplePercent.value);
+      }
+    }
+
+     //Couple Dull-Bright
+     if (couplePercent.name == "Dull-Bright") {
+      localStorageItem = localStorage.getItem("action");
+
+      couplePercent.value = localStorageItem ? localStorageItem : PERCENTS_DEFAULT;
+
+      if(DEBUG_UTILITIES_FUNCTIONS) {
+        console.log("Nouveau Dull-Bright :" + couplePercent.value);
+      }
+    }
+  });
+}
+
 
 function error(text = "Une erreur s'est produite.") {
   console.error(text);
