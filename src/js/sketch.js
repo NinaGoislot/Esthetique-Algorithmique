@@ -24,8 +24,9 @@ const COLORS_BY_SET = 4; //Nb couleurs par ligne de chaque bloc (largeur d'une g
 const SETS_BY_GRID = 4; //Nb de lignes de chaque bloc (hauteur)
 const PERCENTS_DEFAULT = 40;
 
-const MARGIN = 100;
-const SPACING = 20;
+const MARGIN_LAYOUT = 100;
+const SPACING_LAYOUT = 30;
+const SPACING_GRID = 10;
 
 //Canvas = Zone de dessin totale
 const CANVAS_WIDTH = 1000;
@@ -34,18 +35,18 @@ const CANVAS_COLOR = 255;
 
 
 //Layout = Zone de dessin du layout
-const LAYOUT_WIDTH = CANVAS_WIDTH - MARGIN;
-const LAYOUT_HEIGHT = CANVAS_HEIGHT - MARGIN;
+const LAYOUT_WIDTH = CANVAS_WIDTH - MARGIN_LAYOUT;
+const LAYOUT_HEIGHT = CANVAS_HEIGHT - MARGIN_LAYOUT;
 const LAYOUT_COLOR = 'white';
 
 //Grille = Ensemble de sets
-const GRID_WIDTH = LAYOUT_WIDTH / (MAX_SETS / SETS_BY_GRID) - (SPACING - SPACING / (MAX_SETS / SETS_BY_GRID));
+const GRID_WIDTH = LAYOUT_WIDTH / (MAX_SETS / SETS_BY_GRID) - (SPACING_LAYOUT - SPACING_LAYOUT / (MAX_SETS / SETS_BY_GRID));
 const GRID_HEIGHT = LAYOUT_HEIGHT;
-const GRID_COLOR = 'pink';
+const GRID_COLOR = 'white';
 
 //Color = Une couleur
 const COLOR_WIDTH = GRID_WIDTH / COLORS_BY_SET;
-const COLOR_HEIGHT = GRID_HEIGHT / SETS_BY_GRID;
+const COLOR_HEIGHT = GRID_HEIGHT / SETS_BY_GRID - (SPACING_GRID - SPACING_GRID / SETS_BY_GRID);
 
 //Autres variables
 let randomNb; //Nombre random entre 1 et 100 compris
@@ -107,7 +108,7 @@ function setup() {
   background(CANVAS_COLOR);
   colorMode(HSB)
   stroke('white');
-  strokeWeight(2);
+  strokeWeight(0);
 
   noLoop();
 
@@ -120,11 +121,11 @@ function draw() {
 
   frameRate(1);
   fill(LAYOUT_COLOR);
-  rect(MARGIN / 2, MARGIN / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
+  rect(MARGIN_LAYOUT / 2, MARGIN_LAYOUT / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
 
   for (let k = 0; k < MAX_SETS / SETS_BY_GRID; k++) {
     fill(GRID_COLOR);
-    rect(MARGIN / 2 + k * GRID_WIDTH + k * SPACING, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
+    rect(MARGIN_LAYOUT / 2 + k * GRID_WIDTH + k * SPACING_LAYOUT, MARGIN_LAYOUT / 2, GRID_WIDTH, GRID_HEIGHT);
   }
 
   layoutSets = [];
@@ -139,7 +140,7 @@ function draw() {
 
         fill(currentColor.hue, currentColor.sat, currentColor.bright);
 
-        rect(MARGIN / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING, MARGIN / 2 + i * COLOR_HEIGHT, COLOR_WIDTH, COLOR_HEIGHT);
+        rect(MARGIN_LAYOUT / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING_LAYOUT, MARGIN_LAYOUT / 2 + i * COLOR_HEIGHT + i*SPACING_GRID, COLOR_WIDTH, COLOR_HEIGHT);
       }
     }
     layoutSets.push(currentGridSets);
@@ -155,11 +156,11 @@ function draw() {
 
 function reDraw() {
   fill(LAYOUT_COLOR);
-  rect(MARGIN / 2, MARGIN / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
+  rect(MARGIN_LAYOUT / 2, MARGIN_LAYOUT / 2, LAYOUT_WIDTH, LAYOUT_HEIGHT);
 
   for (let k = 0; k < MAX_SETS / SETS_BY_GRID; k++) {
     fill(GRID_COLOR);
-    rect(MARGIN / 2 + k * GRID_WIDTH + k * SPACING, MARGIN / 2, GRID_WIDTH, GRID_HEIGHT);
+    rect(MARGIN_LAYOUT / 2 + k * GRID_WIDTH + k * SPACING_LAYOUT, MARGIN_LAYOUT / 2, GRID_WIDTH, GRID_HEIGHT);
   }
 
   for (let l = 0; l < MAX_SETS / SETS_BY_GRID; l++) {
@@ -173,7 +174,7 @@ function reDraw() {
         currentColor = currentSet[j];
         fill(currentColor.hue, currentColor.sat, currentColor.bright);
 
-        rect(MARGIN / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING, MARGIN / 2 + i * COLOR_HEIGHT, COLOR_WIDTH, COLOR_HEIGHT);
+        rect(MARGIN_LAYOUT / 2 + j * COLOR_WIDTH + l * GRID_WIDTH + l * SPACING_LAYOUT, MARGIN_LAYOUT / 2 + i * COLOR_HEIGHT + i*SPACING_GRID, COLOR_WIDTH, COLOR_HEIGHT);
       }
     }
   }
