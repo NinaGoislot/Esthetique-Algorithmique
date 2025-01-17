@@ -6,11 +6,12 @@ header {
 
 header a {
   color: #000;
-  font-family: "Quiche Flare";
+  font-family: "Quiche-Flare";
   font-size: 3.75rem;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   text-decoration: none;
   text-transform: uppercase;
+  position: relative;
 }
