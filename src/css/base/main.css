@@ -39,10 +39,6 @@ h6 {
   padding: 0;
 }
 
-.nina {
-  flex-direction: row;
-}
-
 main section {
   display: flex;
   justify-content: center;
