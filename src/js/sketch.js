@@ -23,7 +23,7 @@ const DEBUG_ANIMATION_ON = false; //Change this value to hide console
 const MAX_SETS = 20;
 const COLORS_BY_SET = 4; //Nb couleurs par ligne de chaque bloc (largeur d'une grille)
 const SETS_BY_GRID = 4; //Nb de lignes de chaque bloc (hauteur)
-const PERCENTS_DEFAULT = 40;
+const PERCENTS_DEFAULT = 50;
 
 const MARGIN_LAYOUT = 100;
 const SPACING_LAYOUT = 30;
